@@ -1,0 +1,78 @@
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>wang.bannong</groupId>
+    <artifactId>gk5-ntm</artifactId>
+    <version>1.0.0-beta</version>
+  </parent>
+
+  <groupId>wang.bannong</groupId>
+  <artifactId>gk5-ntm-sample</artifactId>
+  <version>1.0.0-beta</version>
+  <name>gk5-ntm-sample</name>
+  <packaging>jar</packaging>
+  <url>http://bannong.wang</url>
+  <description>gk5-ntm-sample</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>wang.bannong</groupId>
+      <artifactId>gk5-starter</artifactId>
+      <version>1.1.1-beta</version>
+    </dependency>
+    <dependency>
+      <groupId>wang.bannong</groupId>
+      <artifactId>gk5-ntm-core</artifactId>
+      <version>1.0.0-beta</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <!-- 为jar包取名 -->
+    <finalName>ntm-sample</finalName>
+    <plugins>
+      <plugin>
+        <!-- The plugin rewrites your manifest -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <!-- 指定该Main Class为全局的唯一入口 -->
+          <mainClass>wang.bannong.gk5.ntm.sample.NtmSampleApplication</mainClass>
+          <layout>ZIP</layout>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <!--可以把依赖的包都打包到生成的Jar包中 -->
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.1</version>
+        <configuration>
+          <threshold>High</threshold>
+          <effort>Default</effort>
+          <findbugsXmlOutput>true</findbugsXmlOutput>
+          <findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>
+          <xmlOutput>true</xmlOutput>
+          <xmlOutput>true</xmlOutput>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

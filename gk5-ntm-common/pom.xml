@@ -1,0 +1,32 @@
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>wang.bannong</groupId>
+    <artifactId>gk5-ntm</artifactId>
+    <version>1.0.0-beta</version>
+  </parent>
+
+  <groupId>wang.bannong</groupId>
+  <artifactId>gk5-ntm-common</artifactId>
+  <version>1.0.1-beta</version>
+  <name>gk5-ntm-common</name>
+  <url>http://bannong.wang</url>
+  <description>gk5-ntm-common</description>
+
+  <properties>
+    <mybatis-plus-core.version>3.3.0</mybatis-plus-core.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-core</artifactId>
+      <version>${mybatis-plus-core.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>
