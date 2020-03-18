@@ -28,8 +28,12 @@ public class LoginService {
         if (!result.isSuccess()) {
             return result;
         }
-        Subject subject = result.getData();
-        log.info("LoginService-subject[{}]", subject);
+        HashMap<String, Object> data = result.getData();
+        Subject subject = new Subject();
+        subject.setId((Long) data.get(ApiConfig.ID));
+        subject.setMobile((String) data.get(ApiConfig.MOBILE));
+        subject.setName((String) data.get(ApiConfig.NICK));
+
 
         AuthTokenHandler.creteAuthToken(subject,
                 apiUnique.equals(ApiConfig.LOGIN_API) ? AuthToken.Role.user : AuthToken.Role.admin,

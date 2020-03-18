@@ -38,7 +38,7 @@ version|String|N|客户端版本(大版本号.小版本号.bugfix版本)|1.0.0
 ##### sign
 对下面拼接的字符串加密，加密方式RSA2048
 ```
-ntmApi=%s&appid=%s&channel=%s&data=%s&ia=%s&ts=%s&ttid=%s&v=%s
+api=%s&appid=%s&channel=%s&data=%s&ia=%s&ts=%s&ttid=%s&v=%s
 ```
 > 如果某个参数为空，带空字符串进行加密
 

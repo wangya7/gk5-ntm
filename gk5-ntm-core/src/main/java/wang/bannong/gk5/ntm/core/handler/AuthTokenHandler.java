@@ -72,6 +72,7 @@ public class AuthTokenHandler {
         authToken.setIa(ia);
         authToken.setSubjectId(subject.getId());
         authToken.setMobile(subject.getMobile());
+        authToken.setName(subject.getName());
         authToken.setRole(role);
         if (MapUtils.isNotEmpty(extend)) {
             authToken.setExtend(extend);

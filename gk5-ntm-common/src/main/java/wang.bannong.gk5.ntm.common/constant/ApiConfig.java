@@ -80,6 +80,7 @@ public class ApiConfig {
     public static final String ID        = "id";
     public static final String MOBILE    = "mobile";
     public static final String NAME      = "name";
+    public static final String NICK      = "nick";
     public static final String ICON      = "icon";
 
 
