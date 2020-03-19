@@ -13,6 +13,7 @@ public enum ApiParamTypeEnum {
     _Byte((byte) 2, "Byte"),
     _Integer((byte) 4, "Integer"),
     _Long((byte) 6, "Long"),
+    _Boolean((byte) 7, "Boolean"),
     _Double((byte) 8, "Double"),
     _BigDecimal((byte) 9, "BigDecimal"),
     _String((byte) 11, "String"),

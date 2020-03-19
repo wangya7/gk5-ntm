@@ -94,6 +94,7 @@ public class NtmApiMgr {
     //************************ 接口
 
     public NtmResult apiList(ApiDto dto) throws Exception {
+        log.info("query apis, dto={}", dto);
         LambdaQueryWrapper<NtmApi> wrapper = new LambdaQueryWrapper<>();
 
         if (dto.getName() != null) {
@@ -199,15 +200,24 @@ public class NtmApiMgr {
             return NtmResult.fail("接口已经存在");
         }
 
-        if (dto.getName() != null) record.setName(dto.getName());
-        if (dto.getMethod() != null) record.setMethod(dto.getMethod());
-        if (dto.getInnerInterface() != null) record.setInnerInterface(dto.getInnerInterface());
-        if (dto.getInnerMethod() != null) record.setInnerMethod(dto.getInnerMethod());
-        if (dto.getIsIa() != null) record.setIsIa(dto.getIsIa());
-        if (dto.getIsAsync() != null) record.setIsAsync(dto.getIsAsync());
-        if (dto.getDailyFlowLimit() != null) record.setDailyFlowLimit(dto.getDailyFlowLimit());
-        if (dto.getResult() != null) record.setResult(dto.getResult());
-        if (dto.getStatus() != null) record.setStatus(dto.getStatus());
+        if (dto.getName() != null)
+            record.setName(dto.getName());
+        if (dto.getMethod() != null)
+            record.setMethod(dto.getMethod());
+        if (dto.getInnerInterface() != null)
+            record.setInnerInterface(dto.getInnerInterface());
+        if (dto.getInnerMethod() != null)
+            record.setInnerMethod(dto.getInnerMethod());
+        if (dto.getIsIa() != null)
+            record.setIsIa(dto.getIsIa());
+        if (dto.getIsAsync() != null)
+            record.setIsAsync(dto.getIsAsync());
+        if (dto.getDailyFlowLimit() != null)
+            record.setDailyFlowLimit(dto.getDailyFlowLimit());
+        if (dto.getResult() != null)
+            record.setResult(dto.getResult());
+        if (dto.getStatus() != null)
+            record.setStatus(dto.getStatus());
         record.setModifyTime(new Date());
         masterNtmApiDao.updateById(record);
         return NtmResult.success(record);
@@ -216,15 +226,19 @@ public class NtmApiMgr {
     @Transactional
     public NtmResult deleteApi(ApiDto dto) throws Exception {
         masterNtmApiDao.deleteById(dto.getId());
+        LambdaQueryWrapper<NtmApiParam> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(NtmApiParam::getApiId, dto.getId());
+        masterNtmApiParamDao.delete(lambdaQueryWrapper);
         return NtmResult.SUCCESS;
     }
 
     public NtmResult apiParamList(ApiParamDto dto) throws Exception {
-        QueryWrapper<NtmApiParam> wrapper = new QueryWrapper<>();
-        wrapper.eq("apiId", dto.getApiId());
-        Page<NtmApiParam> ntmApiParamPage = new Page<>(dto.getPageNum(), dto.getPageSize());
-        slaveNtmApiParamDao.selectPage(ntmApiParamPage, wrapper);
-        List<NtmApiParam> apiParamList = ntmApiParamPage.getRecords();
+        log.info("query api-params,dto={}", dto);
+        LambdaQueryWrapper<NtmApiParam> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(NtmApiParam::getApiId, dto.getApiId());
+        Page<NtmApiParam> page = new Page<>(dto.getPageNum(), dto.getPageSize());
+        slaveNtmApiParamDao.selectPage(page, wrapper);
+        List<NtmApiParam> apiParamList = page.getRecords();
         if (CollectionUtils.isNotEmpty(apiParamList)) {
             List<NtmApiParamVo> vos = new ArrayList<>();
             for (NtmApiParam record : apiParamList) {
@@ -243,7 +257,7 @@ public class NtmApiMgr {
                 vo.setModifyTime(DateUtils.format(record.getModifyTime()));
                 vos.add(vo);
             }
-            return NtmResult.success(PaginationResult.of(ntmApiParamPage, vos));
+            return NtmResult.success(PaginationResult.of(page, vos));
         }
         return NtmResult.success(PaginationResult.empty(dto.getPageNum(), dto.getPageSize()));
     }
@@ -285,13 +299,20 @@ public class NtmApiMgr {
             record.setName(name);
         }
 
-        if (dto.getPid() != null) record.setPid(dto.getPid());
-        if (dto.getStatus() != null) record.setStatus(dto.getStatus());
-        if (dto.getType() != null) record.setType(dto.getType());
-        if (dto.getIsRequired() != null) record.setIsRequired(dto.getIsRequired());
-        if (dto.getErrMsg() != null) record.setErrMsg(dto.getErrMsg());
-        if (dto.getDesp() != null) record.setDesp(dto.getDesp());
-        if (dto.getExample() != null) record.setExample(dto.getExample());
+        if (dto.getPid() != null)
+            record.setPid(dto.getPid());
+        if (dto.getStatus() != null)
+            record.setStatus(dto.getStatus());
+        if (dto.getType() != null)
+            record.setType(dto.getType());
+        if (dto.getIsRequired() != null)
+            record.setIsRequired(dto.getIsRequired());
+        if (dto.getErrMsg() != null)
+            record.setErrMsg(dto.getErrMsg());
+        if (dto.getDesp() != null)
+            record.setDesp(dto.getDesp());
+        if (dto.getExample() != null)
+            record.setExample(dto.getExample());
         record.setModifyTime(new Date());
         masterNtmApiParamDao.updateById(record);
         return NtmResult.success(record);

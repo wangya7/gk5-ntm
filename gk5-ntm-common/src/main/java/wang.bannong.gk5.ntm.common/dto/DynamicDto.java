@@ -9,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -203,7 +206,13 @@ public class DynamicDto implements Serializable {
         try {
             t = clazz.newInstance();
 
-            Field[] fields = t.getClass().getDeclaredFields();
+            List<Field> fields = new ArrayList<>();
+            Class tmpClass = t.getClass();
+            while (tmpClass != null) {
+                fields.addAll(Arrays.asList(tmpClass.getDeclaredFields()));
+                tmpClass = tmpClass.getSuperclass();
+            }
+
             for (Field field : fields) {
                 int mod = field.getModifiers();
                 if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
@@ -234,6 +243,12 @@ public class DynamicDto implements Serializable {
                             break;
                         case "double":
                             field.set(t, Double.parseDouble(value));
+                            break;
+                        case "Boolean":
+                            field.set(t, Boolean.valueOf(value));
+                            break;
+                        case "boolean":
+                            field.set(t, Boolean.parseBoolean(value));
                             break;
                         case "byte":
                             field.set(t, Byte.parseByte(value));
@@ -268,6 +283,19 @@ public class DynamicDto implements Serializable {
                 ", pageSize=" + pageSize +
                 ", params=" + params +
                 '}';
+    }
+
+    public static void main(String... args) {
+        Map<String, String> params = new HashMap<>();
+        params.put("pageNum", "2");
+        params.put("pageSize", "8");
+        params.put("appid", "ntm");
+        params.put("id", "3567685");
+
+        DynamicDto dynamicDto = DynamicDto.of(params);
+        ApiDto dto = dynamicDto.get(ApiDto.class);
+
+        System.out.println(dto);
     }
 
 }

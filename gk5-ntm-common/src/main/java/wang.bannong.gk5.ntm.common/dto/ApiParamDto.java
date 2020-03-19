@@ -3,9 +3,11 @@ package wang.bannong.gk5.ntm.common.dto;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.ToString;
 import wang.bannong.gk5.ntm.common.model.BaseDto;
 
 @Data
+@ToString(callSuper = true)
 public class ApiParamDto extends BaseDto {
     private static final long serialVersionUID = -1285545281939659754L;
 
