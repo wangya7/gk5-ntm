@@ -8,26 +8,25 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import wang.bannong.gk5.ntm.core.handler.ApiHandler;
-import wang.bannong.gk5.ntm.core.handler.AuthTokenHandler;
-import wang.bannong.gk5.ntm.core.handler.CORSHandler;
-import wang.bannong.gk5.ntm.core.handler.IAuthorityAccess;
-import wang.bannong.gk5.ntm.core.handler.RequestHandler;
-import wang.bannong.gk5.ntm.core.rpc.NtmRpcClient;
-import wang.bannong.gk5.ntm.core.service.BaseInnerService;
-import wang.bannong.gk5.ntm.core.trace.NtmTracesManager;
+import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.constant.ApiConfig;
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.dto.DynamicDto;
-import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
 import wang.bannong.gk5.ntm.common.model.NtmRequest;
 import wang.bannong.gk5.ntm.common.model.NtmResponse;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.ResultCode;
+import wang.bannong.gk5.ntm.core.handler.ApiHandler;
+import wang.bannong.gk5.ntm.core.handler.AuthTokenHandler;
+import wang.bannong.gk5.ntm.core.handler.IAuthorityAccess;
+import wang.bannong.gk5.ntm.core.handler.RequestHandler;
+import wang.bannong.gk5.ntm.core.rpc.NtmRpcClient;
+import wang.bannong.gk5.ntm.core.service.BaseInnerService;
 import wang.bannong.gk5.ntm.core.service.LoginService;
 import wang.bannong.gk5.ntm.core.service.LogoutService;
+import wang.bannong.gk5.ntm.core.trace.NtmTracesManager;
 import wang.bannong.gk5.util.SpringBeanUtils;
 import wang.bannong.gk5.util.TaskExecutor;
 
@@ -50,7 +49,6 @@ public class BaseNtmCtrl {
             return log(NtmResponse.builder(domain).builder());
 
         NtmRequest request = domain.getData();
-        CORSHandler.setCORSSettingIfNeed(request, servletRequest, servletResponse);
 
         NtmInnerRequest innerRequest = NtmInnerRequest.of(request);
 

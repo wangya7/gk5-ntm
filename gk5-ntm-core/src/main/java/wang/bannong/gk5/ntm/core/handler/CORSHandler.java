@@ -14,12 +14,14 @@ import wang.bannong.gk5.util.URLUtils;
 @Slf4j
 public final class CORSHandler {
 
-    public static void setCORSSettingIfNeed(NtmRequest mtopRequest, HttpServletRequest request, HttpServletResponse response) {
+    public static void setCORSSettingIfNeed(HttpServletRequest request, HttpServletResponse response) {
         if (NtmConfigSetting.corsOriginDefaultSetting) {
             log.info("CORS ALL-PARAMS Allowed");
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Credentials", "true");
             response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With,X-Data-Type,X-Auth-Token,channel,ia,oia,v,ts,lng,lat,ttid,appid");
+            response.setHeader("Access-Control-Max-Age", "3600");
             return;
         }
         String host = request.getHeader("Host");
