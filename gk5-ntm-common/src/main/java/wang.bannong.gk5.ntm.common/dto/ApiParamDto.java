@@ -11,7 +11,7 @@ import wang.bannong.gk5.ntm.common.model.BaseDto;
 public class ApiParamDto extends BaseDto {
     private static final long serialVersionUID = -1285545281939659754L;
 
-    private Long    id;
+    private Long    apiParamId;
     private Long    pid;
     private Long    apiId;
     private String  name;

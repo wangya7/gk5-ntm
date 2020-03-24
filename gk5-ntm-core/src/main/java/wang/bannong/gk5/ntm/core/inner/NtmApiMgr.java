@@ -1,31 +1,40 @@
 package wang.bannong.gk5.ntm.core.inner;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
+import wang.bannong.gk5.ntm.common.constant.ApiConfig;
+import wang.bannong.gk5.ntm.common.constant.HttpMethod;
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.domain.NtmApiParam;
 import wang.bannong.gk5.ntm.common.dto.ApiDto;
 import wang.bannong.gk5.ntm.common.dto.ApiParamDto;
+import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.PaginationResult;
 import wang.bannong.gk5.ntm.common.vo.NtmApiParamVo;
 import wang.bannong.gk5.ntm.common.vo.NtmApiVo;
 import wang.bannong.gk5.ntm.core.dao.NtmApiDao;
 import wang.bannong.gk5.ntm.core.dao.NtmApiParamDao;
+import wang.bannong.gk5.ntm.core.handler.RequestHandler;
 import wang.bannong.gk5.util.DateUtils;
+import wang.bannong.gk5.util.OkHttpUtils;
 
 @Slf4j
 @Component
@@ -69,9 +78,9 @@ public class NtmApiMgr {
         return masterNtmApiParamDao.selectList(wrapper);
     }
 
-    public List<NtmApiParam> queryParamsByPid(Long apiId) {
+    public List<NtmApiParam> queryParamsByApiId(Long apiId) {
         QueryWrapper<NtmApiParam> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(NtmApiParam::getPid, apiId);
+        wrapper.lambda().eq(NtmApiParam::getApiId, apiId);
         return masterNtmApiParamDao.selectList(wrapper);
     }
 
@@ -107,6 +116,8 @@ public class NtmApiMgr {
             wrapper.eq(NtmApi::getAppid, dto.getAppid());
         }
 
+        wrapper.orderByDesc(NtmApi::getModifyTime);
+
         Page<NtmApi> ntmApiPage = new Page<>(dto.getPageNum(), dto.getPageSize());
         slaveNtmApiDao.selectPage(ntmApiPage, wrapper);
         List<NtmApi> apiList = ntmApiPage.getRecords();
@@ -114,7 +125,7 @@ public class NtmApiMgr {
             List<NtmApiVo> vos = new ArrayList<>();
             for (NtmApi record : apiList) {
                 NtmApiVo vo = new NtmApiVo();
-                vo.setId(String.valueOf(record.getId()));
+                vo.setApiId(String.valueOf(record.getId()));
                 vo.setUnique(record.getUnique());
                 vo.setName(record.getName());
                 vo.setVersion(record.getVersion());
@@ -166,7 +177,7 @@ public class NtmApiMgr {
 
     @Transactional
     public NtmResult modifyApi(ApiDto dto) throws Exception {
-        Long id = dto.getId();
+        Long id = dto.getApiId();
         NtmApi record = queryById(id);
         if (record == null) {
             return NtmResult.fail("接口不存在");
@@ -200,24 +211,18 @@ public class NtmApiMgr {
             return NtmResult.fail("接口已经存在");
         }
 
-        if (dto.getName() != null)
-            record.setName(dto.getName());
-        if (dto.getMethod() != null)
-            record.setMethod(dto.getMethod());
-        if (dto.getInnerInterface() != null)
-            record.setInnerInterface(dto.getInnerInterface());
-        if (dto.getInnerMethod() != null)
-            record.setInnerMethod(dto.getInnerMethod());
-        if (dto.getIsIa() != null)
-            record.setIsIa(dto.getIsIa());
-        if (dto.getIsAsync() != null)
-            record.setIsAsync(dto.getIsAsync());
-        if (dto.getDailyFlowLimit() != null)
-            record.setDailyFlowLimit(dto.getDailyFlowLimit());
-        if (dto.getResult() != null)
-            record.setResult(dto.getResult());
-        if (dto.getStatus() != null)
+        if (dto.getStatus() != null) {
             record.setStatus(dto.getStatus());
+        } else {
+            record.setName(dto.getName());
+            record.setMethod(dto.getMethod());
+            record.setInnerInterface(dto.getInnerInterface());
+            record.setInnerMethod(dto.getInnerMethod());
+            record.setIsIa(dto.getIsIa());
+            record.setIsAsync(dto.getIsAsync());
+            record.setDailyFlowLimit(dto.getDailyFlowLimit());
+            record.setResult(dto.getResult());
+        }
         record.setModifyTime(new Date());
         masterNtmApiDao.updateById(record);
         return NtmResult.success(record);
@@ -225,9 +230,9 @@ public class NtmApiMgr {
 
     @Transactional
     public NtmResult deleteApi(ApiDto dto) throws Exception {
-        masterNtmApiDao.deleteById(dto.getId());
+        masterNtmApiDao.deleteById(dto.getApiId());
         LambdaQueryWrapper<NtmApiParam> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(NtmApiParam::getApiId, dto.getId());
+        lambdaQueryWrapper.eq(NtmApiParam::getApiId, dto.getApiId());
         masterNtmApiParamDao.delete(lambdaQueryWrapper);
         return NtmResult.SUCCESS;
     }
@@ -235,7 +240,9 @@ public class NtmApiMgr {
     public NtmResult apiParamList(ApiParamDto dto) throws Exception {
         log.info("query api-params,dto={}", dto);
         LambdaQueryWrapper<NtmApiParam> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(NtmApiParam::getApiId, dto.getApiId());
+        wrapper.eq(NtmApiParam::getApiId, dto.getApiId())
+               .orderByDesc(NtmApiParam::getModifyTime);
+
         Page<NtmApiParam> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         slaveNtmApiParamDao.selectPage(page, wrapper);
         List<NtmApiParam> apiParamList = page.getRecords();
@@ -243,7 +250,7 @@ public class NtmApiMgr {
             List<NtmApiParamVo> vos = new ArrayList<>();
             for (NtmApiParam record : apiParamList) {
                 NtmApiParamVo vo = new NtmApiParamVo();
-                vo.setId(String.valueOf(record.getId()));
+                vo.setApiParamId(String.valueOf(record.getId()));
                 vo.setPid(String.valueOf(record.getPid()));
                 vo.setApiId(String.valueOf(record.getApiId()));
                 vo.setName(record.getName());
@@ -288,7 +295,7 @@ public class NtmApiMgr {
 
     @Transactional
     public NtmResult modifyApiParam(ApiParamDto dto) throws Exception {
-        Long id = dto.getId();
+        Long id = dto.getApiParamId();
         NtmApiParam record = queryParamById(id);
         String name = dto.getName();
         if (name != null) {
@@ -299,20 +306,17 @@ public class NtmApiMgr {
             record.setName(name);
         }
 
-        if (dto.getPid() != null)
-            record.setPid(dto.getPid());
-        if (dto.getStatus() != null)
+        if (dto.getStatus() != null) {
             record.setStatus(dto.getStatus());
-        if (dto.getType() != null)
+        } else {
+            record.setPid(dto.getPid());
             record.setType(dto.getType());
-        if (dto.getIsRequired() != null)
             record.setIsRequired(dto.getIsRequired());
-        if (dto.getErrMsg() != null)
             record.setErrMsg(dto.getErrMsg());
-        if (dto.getDesp() != null)
             record.setDesp(dto.getDesp());
-        if (dto.getExample() != null)
             record.setExample(dto.getExample());
+        }
+
         record.setModifyTime(new Date());
         masterNtmApiParamDao.updateById(record);
         return NtmResult.success(record);
@@ -320,7 +324,76 @@ public class NtmApiMgr {
 
     @Transactional
     public NtmResult deleteApiParam(ApiParamDto dto) throws Exception {
-        masterNtmApiParamDao.deleteById(dto.getId());
+        masterNtmApiParamDao.deleteById(dto.getApiParamId());
         return NtmResult.SUCCESS;
+    }
+
+    /**
+     * 接口测试
+     *
+     * @param innerRequest innerRequest
+     */
+    public NtmResult testApi(NtmInnerRequest innerRequest) throws Exception {
+        Map<String, String> dataStore = innerRequest.getDataStore();
+        Long apiId = Long.valueOf(innerRequest.get(ApiConfig.API_ID));
+        NtmApi api = queryById(apiId);
+        if (api.getUnique().equals(innerRequest.getRequest().getApi())) {
+            return NtmResult.fail("Test接口不支持自测");
+        }
+        Map<String, String> paramsHeader = innerRequest.getDataStore();
+        String ts = dataStore.get(ApiConfig.TS);
+        paramsHeader.put(ApiConfig.TS, StringUtils.isBlank(ts) ? "20190801" : ts);
+        dataStore.remove(ApiConfig.TS);
+
+        paramsHeader.put(ApiConfig.LNG, "22");
+        paramsHeader.put(ApiConfig.LAT, "22");
+        dataStore.remove(ApiConfig.LNG);
+        dataStore.remove(ApiConfig.LAT);
+
+        String ttid = dataStore.get(ApiConfig.TTID);
+        paramsHeader.put(ApiConfig.TTID, StringUtils.isBlank(ttid) ? "Chrome/76.0.3809.100@H5@Macintosh; Intel Mac OS X 10_14_6@1.0.0" : ttid);
+        dataStore.remove(ApiConfig.TTID);
+
+        paramsHeader.put(ApiConfig.APPID, api.getAppid());
+        dataStore.remove(ApiConfig.APPID);
+
+        String channel = dataStore.get(ApiConfig.CHANNEL);
+        paramsHeader.put(ApiConfig.CHANNEL, StringUtils.isBlank(channel) ? "hz" : channel);
+        dataStore.remove(ApiConfig.CHANNEL);
+
+        paramsHeader.put(ApiConfig.IA, RequestHandler.format(dataStore.get(ApiConfig.IA)));
+        dataStore.remove(ApiConfig.IA);
+        paramsHeader.put(ApiConfig.OIA, RequestHandler.format(dataStore.get(ApiConfig.OIA)));
+        dataStore.remove(ApiConfig.OIA);
+
+        String baseTestURL = ConfigTools.get(NtmConstant.BASE_TEST_URL);
+        if (StringUtils.isBlank(baseTestURL)) {
+            return NtmResult.fail("系统缺少 BASE_TEST_URL 配置项！！！");
+        }
+
+        log.info("结构测试, params={}, paramsHeader={}", dataStore, paramsHeader);
+
+        Map<String, String> params = new HashMap<>();
+        params.put(ApiConfig.SIGN, dataStore.get(ApiConfig.SIGN));
+        dataStore.remove(ApiConfig.SIGN);
+
+        params.put(ApiConfig.API, api.getUnique());
+        dataStore.remove(ApiConfig.API);
+
+        params.put(ApiConfig.V, String.valueOf(api.getVersion()));
+        dataStore.remove(ApiConfig.V);
+
+        params.put(ApiConfig.DATA, JSONObject.toJSONString(dataStore));
+
+        JSONObject result = new JSONObject();
+        String result_ = null;
+        if (api.getStatus().equals(HttpMethod.GET)) {
+            result_ = OkHttpUtils.get(baseTestURL, params, paramsHeader);
+        } else if (api.getStatus().equals(HttpMethod.POST)) {
+            result_ = OkHttpUtils.post(baseTestURL, params, paramsHeader);
+        }
+
+        result.put("结构测试, result={}", result_);
+        return NtmResult.success(result);
     }
 }

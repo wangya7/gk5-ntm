@@ -12,7 +12,7 @@ public class ApiDto extends BaseDto {
 
     private static final long serialVersionUID = 6256707767503617544L;
 
-    private Long    id;
+    private Long    apiId;
     private String  unique;
     private String  name;
     private Integer version;

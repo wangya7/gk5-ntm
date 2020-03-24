@@ -8,7 +8,7 @@ import lombok.Data;
 public class NtmApiVo implements Serializable {
     private static final long serialVersionUID = 3366245839146063293L;
 
-    private String  id;
+    private String  apiId;
     private String  unique;
     private String  name;
     private int     version;
