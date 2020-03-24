@@ -340,7 +340,7 @@ public class NtmApiMgr {
         if (api.getUnique().equals(innerRequest.getRequest().getApi())) {
             return NtmResult.fail("Test接口不支持自测");
         }
-        Map<String, String> paramsHeader = innerRequest.getDataStore();
+        Map<String, String> paramsHeader = new HashMap<>();
         String ts = dataStore.get(ApiConfig.TS);
         paramsHeader.put(ApiConfig.TS, StringUtils.isBlank(ts) ? "20190801" : ts);
         dataStore.remove(ApiConfig.TS);
@@ -371,29 +371,27 @@ public class NtmApiMgr {
             return NtmResult.fail("系统缺少 BASE_TEST_URL 配置项！！！");
         }
 
-        log.info("结构测试, params={}, paramsHeader={}", dataStore, paramsHeader);
-
         Map<String, String> params = new HashMap<>();
         params.put(ApiConfig.SIGN, dataStore.get(ApiConfig.SIGN));
         dataStore.remove(ApiConfig.SIGN);
-
         params.put(ApiConfig.API, api.getUnique());
         dataStore.remove(ApiConfig.API);
-
         params.put(ApiConfig.V, String.valueOf(api.getVersion()));
         dataStore.remove(ApiConfig.V);
-
         params.put(ApiConfig.DATA, JSONObject.toJSONString(dataStore));
 
         JSONObject result = new JSONObject();
         String result_ = null;
+
+        log.info("结构测试, url={}, params={}, paramsHeader={}", baseTestURL, params, paramsHeader);
         if (api.getStatus().equals(HttpMethod.GET)) {
             result_ = OkHttpUtils.get(baseTestURL, params, paramsHeader);
         } else if (api.getStatus().equals(HttpMethod.POST)) {
             result_ = OkHttpUtils.post(baseTestURL, params, paramsHeader);
         }
 
-        result.put("结构测试, result={}", result_);
+        log.info("结构测试, result={}", result_);
+        result.put("result", result_);
         return NtmResult.success(result);
     }
 }
