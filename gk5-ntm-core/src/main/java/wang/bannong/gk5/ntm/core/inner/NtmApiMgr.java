@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import wang.bannong.gk5.ntm.common.vo.NtmApiVo;
 import wang.bannong.gk5.ntm.core.dao.NtmApiDao;
 import wang.bannong.gk5.ntm.core.dao.NtmApiParamDao;
 import wang.bannong.gk5.ntm.core.handler.RequestHandler;
+import wang.bannong.gk5.util.Constant;
 import wang.bannong.gk5.util.DateUtils;
 import wang.bannong.gk5.util.OkHttpUtils;
 
@@ -332,10 +334,14 @@ public class NtmApiMgr {
      * 接口测试
      *
      * @param innerRequest innerRequest
+     * @deprecated
      */
+    @Deprecated
     public NtmResult testApi(NtmInnerRequest innerRequest) throws Exception {
         Map<String, String> dataStore = innerRequest.getDataStore();
         Long apiId = Long.valueOf(innerRequest.get(ApiConfig.API_ID));
+        dataStore.remove(ApiConfig.API_ID);
+
         NtmApi api = queryById(apiId);
         if (api.getUnique().equals(innerRequest.getRequest().getApi())) {
             return NtmResult.fail("Test接口不支持自测");
@@ -378,15 +384,15 @@ public class NtmApiMgr {
         dataStore.remove(ApiConfig.API);
         params.put(ApiConfig.V, String.valueOf(api.getVersion()));
         dataStore.remove(ApiConfig.V);
-        params.put(ApiConfig.DATA, JSONObject.toJSONString(dataStore));
+        params.put(ApiConfig.DATA, URLEncoder.encode(JSONObject.toJSONString(dataStore), Constant.UTF8));
 
         JSONObject result = new JSONObject();
         String result_ = null;
 
         log.info("结构测试, url={}, params={}, paramsHeader={}", baseTestURL, params, paramsHeader);
-        if (api.getStatus().equals(HttpMethod.GET)) {
+        if (api.getStatus().equals(HttpMethod.GET.getCode())) {
             result_ = OkHttpUtils.get(baseTestURL, params, paramsHeader);
-        } else if (api.getStatus().equals(HttpMethod.POST)) {
+        } else if (api.getStatus().equals(HttpMethod.POST.getCode())) {
             result_ = OkHttpUtils.post(baseTestURL, params, paramsHeader);
         }
 
@@ -394,4 +400,5 @@ public class NtmApiMgr {
         result.put("result", result_);
         return NtmResult.success(result);
     }
+
 }

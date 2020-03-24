@@ -12,6 +12,7 @@ import wang.bannong.gk5.ntm.core.service.BaseInnerService;
 
 @Slf4j
 @Service
+@Deprecated
 public class InnerApiTest implements BaseInnerService {
     @Autowired
     private NtmApiMgr ntmApiMgr;
