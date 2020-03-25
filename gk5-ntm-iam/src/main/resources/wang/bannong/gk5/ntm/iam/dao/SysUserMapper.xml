@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.bannong.gk5.ntm.iam.dao.SysUserDao">
+  <resultMap id="BaseResultMap" type="wang.bannong.gk5.ntm.iam.common.domain.SysUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="identity" jdbcType="VARCHAR" property="identity" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="work_number" jdbcType="VARCHAR" property="workNumber" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, org_id, mobile, identity, password, work_number, icon, email, name,
+    status, last_login_time, creator_id, create_time, modify_time
+  </sql>
+</mapper>

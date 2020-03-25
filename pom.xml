@@ -42,6 +42,7 @@
 
   <modules>
     <module>gk5-ntm-common</module>
+    <module>gk5-ntm-iam</module>
     <module>gk5-ntm-core</module>
     <module>gk5-ntm-sample</module>
   </modules>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.bannong.gk5.ntm.iam.dao.SysOrgDao">
+  <resultMap id="BaseResultMap" type="wang.bannong.gk5.ntm.iam.common.domain.SysOrg">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="number" jdbcType="VARCHAR" property="number" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="street" jdbcType="INTEGER" property="street" />
+    <result column="area" jdbcType="INTEGER" property="area" />
+    <result column="city" jdbcType="INTEGER" property="city" />
+    <result column="province" jdbcType="INTEGER" property="province" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pid, name, number, address, street, area, city, province, type, create_time, modify_time
+  </sql>
+</mapper>

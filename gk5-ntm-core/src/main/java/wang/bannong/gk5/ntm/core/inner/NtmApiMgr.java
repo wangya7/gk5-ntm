@@ -37,6 +37,7 @@ import wang.bannong.gk5.ntm.core.handler.RequestHandler;
 import wang.bannong.gk5.util.Constant;
 import wang.bannong.gk5.util.DateUtils;
 import wang.bannong.gk5.util.OkHttpUtils;
+import wang.bannong.gk5.util.SnowFlakeGenerator;
 
 @Slf4j
 @Component
@@ -159,6 +160,7 @@ public class NtmApiMgr {
             return NtmResult.fail("接口已经存在");
         }
         record = new NtmApi();
+        record.setId(SnowFlakeGenerator.Factory.creategGnerator(3L, 3L).nextId());
         record.setUnique(unique);
         record.setName(dto.getName());
         record.setVersion(version);
@@ -184,6 +186,16 @@ public class NtmApiMgr {
         if (record == null) {
             return NtmResult.fail("接口不存在");
         }
+
+        // 禁用操作
+        if (dto.getStatus() != null) {
+            record.setStatus(dto.getStatus());
+            record.setModifyTime(new Date());
+            masterNtmApiDao.updateById(record);
+            return NtmResult.success(record);
+        }
+
+
         String appid;
         if (dto.getAppid() != null) {
             appid = dto.getAppid();
@@ -213,18 +225,15 @@ public class NtmApiMgr {
             return NtmResult.fail("接口已经存在");
         }
 
-        if (dto.getStatus() != null) {
-            record.setStatus(dto.getStatus());
-        } else {
-            record.setName(dto.getName());
-            record.setMethod(dto.getMethod());
-            record.setInnerInterface(dto.getInnerInterface());
-            record.setInnerMethod(dto.getInnerMethod());
-            record.setIsIa(dto.getIsIa());
-            record.setIsAsync(dto.getIsAsync());
-            record.setDailyFlowLimit(dto.getDailyFlowLimit());
-            record.setResult(dto.getResult());
-        }
+        record.setName(dto.getName());
+        record.setMethod(dto.getMethod());
+        record.setInnerInterface(dto.getInnerInterface());
+        record.setInnerMethod(dto.getInnerMethod());
+        record.setIsIa(dto.getIsIa());
+        record.setIsAsync(dto.getIsAsync());
+        record.setDailyFlowLimit(dto.getDailyFlowLimit());
+        record.setResult(dto.getResult());
+
         record.setModifyTime(new Date());
         masterNtmApiDao.updateById(record);
         return NtmResult.success(record);
@@ -280,6 +289,7 @@ public class NtmApiMgr {
             return NtmResult.fail("接口参数已经存在");
         }
         record = new NtmApiParam();
+        record.setId(SnowFlakeGenerator.Factory.creategGnerator(5L, 5L).nextId());
         record.setPid(dto.getPid());
         record.setApiId(apiId);
         record.setName(name);
@@ -307,17 +317,12 @@ public class NtmApiMgr {
             }
             record.setName(name);
         }
-
-        if (dto.getStatus() != null) {
-            record.setStatus(dto.getStatus());
-        } else {
-            record.setPid(dto.getPid());
-            record.setType(dto.getType());
-            record.setIsRequired(dto.getIsRequired());
-            record.setErrMsg(dto.getErrMsg());
-            record.setDesp(dto.getDesp());
-            record.setExample(dto.getExample());
-        }
+        record.setPid(dto.getPid());
+        record.setType(dto.getType());
+        record.setIsRequired(dto.getIsRequired());
+        record.setErrMsg(dto.getErrMsg());
+        record.setDesp(dto.getDesp());
+        record.setExample(dto.getExample());
 
         record.setModifyTime(new Date());
         masterNtmApiParamDao.updateById(record);

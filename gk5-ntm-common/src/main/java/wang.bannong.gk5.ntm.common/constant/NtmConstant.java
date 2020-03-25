@@ -28,4 +28,6 @@ public interface NtmConstant {
     Integer SUCCESS_CODE = 1;
 
     String BASE_TEST_URL = "BASE_TEST_URL";
+
+    String EXP_MSG = "服务开小差啦，稍后重试";
 }

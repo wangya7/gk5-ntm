@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.bannong.gk5.iam.dao.mapper.SysTopic">
+  <resultMap id="BaseResultMap" type="wang.bannong.gk5.ntm.iam.common.domain.SysTopic">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="unique" jdbcType="VARCHAR" property="unique" />
+    <result column="menu2_id" jdbcType="BIGINT" property="menu2Id" />
+    <result column="menu3_id" jdbcType="BIGINT" property="menu3Id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, unique, menu2_id, menu3_id, create_time, modify_time
+  </sql>
+</mapper>
