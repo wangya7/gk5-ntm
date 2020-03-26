@@ -17,11 +17,11 @@ import wang.bannong.gk5.ntm.iam.mgr.SysOrgMgr;
 import wang.bannong.gk5.ntm.iam.mgr.SysRoleMgr;
 import wang.bannong.gk5.ntm.iam.mgr.SysTopicMgr;
 import wang.bannong.gk5.ntm.iam.mgr.SysUserMgr;
-import wang.bannong.gk5.ntm.iam.service.IamService;
+import wang.bannong.gk5.ntm.iam.service.IamClient;
 
 @Slf4j
-@Service("iamService")
-public class IamServiceDefault implements IamService {
+@Service("iamClient")
+public class IamClientDefault implements IamClient {
 
     @Autowired
     private SysOrgMgr   sysOrgMgr;
@@ -210,6 +210,16 @@ public class IamServiceDefault implements IamService {
     }
 
     /***** 人员管理 *****/
+
+    @Override
+    public NtmResult login(SysUserDto dto) {
+        try {
+            return sysUserMgr.login(dto);
+        } catch (Exception e) {
+            log.error("后台登录，dto={}，异常信息：", dto, e);
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public NtmResult queryUser(SysUserDto dto) {

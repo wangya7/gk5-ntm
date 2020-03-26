@@ -188,7 +188,7 @@ public class NtmApiMgr {
         }
 
         // 禁用操作
-        if (dto.getStatus() != null) {
+        if (dto.getStatus() != null && dto.getStatus().equals(NtmConstant.EXP_STATUS)) {
             record.setStatus(dto.getStatus());
             record.setModifyTime(new Date());
             masterNtmApiDao.updateById(record);

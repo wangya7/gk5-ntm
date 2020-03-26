@@ -1,9 +1,15 @@
 package wang.bannong.gk5.ntm.iam.common.vo;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import wang.bannong.gk5.ntm.iam.common.domain.SysUser;
+import wang.bannong.gk5.ntm.iam.common.domain.SysUserRole;
+import wang.bannong.gk5.util.DateUtils;
 import wang.bannong.gk5.util.domain.Pair;
 
 @Data
@@ -28,4 +34,23 @@ public class SysUserVo implements Serializable {
     private String modifyTime;
 
     private List<Pair<String, String>> roles;
+
+
+    public static SysUserVo of(SysUser record) {
+        SysUserVo vo = new SysUserVo();
+        vo.setId(String.valueOf(record.getId()));
+        vo.setName(record.getName());
+        vo.setMobile(record.getMobile());
+        vo.setIdentity(record.getIdentity());
+        vo.setWorkNumber(record.getWorkNumber());
+        vo.setIcon(record.getIcon());
+        vo.setEmail(record.getEmail());
+        vo.setStatus(record.getStatus());
+
+        if (record.getLastLoginTime() != null) {
+            vo.setLastLoginTime(DateUtils.format(record.getLastLoginTime()));
+        }
+        vo.setCreateTime(DateUtils.format(record.getCreateTime()));
+        return vo;
+    }
 }

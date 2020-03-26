@@ -99,6 +99,14 @@ public class SysUserMgr {
 
     //************* 接口操作
 
+    public NtmResult login(SysUserDto dto) throws Exception {
+        SysUser user = queryByMobile(dto.getMobile());
+        if (user.getPassword().equals(MD5Util.md5LowerCase(dto.getMobile() + dto.getPassword()))) {
+            return NtmResult.success(user);
+        }
+        return NtmResult.fail("手机号码密码不匹配");
+    }
+
     public NtmResult querySysUser(SysUserDto dto) throws Exception {
         int pageNum = dto.getPageNum(), pageSize = dto.getPageSize();
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
@@ -139,29 +147,14 @@ public class SysUserMgr {
 
             List<SysUserVo> vos = new ArrayList<>();
             for (SysUser record : list) {
-                SysUserVo vo = new SysUserVo();
-                vo.setId(String.valueOf(record.getId()));
-                vo.setName(record.getName());
-                vo.setMobile(record.getMobile());
-                vo.setIdentity(record.getIdentity());
-                vo.setWorkNumber(record.getWorkNumber());
-                vo.setIcon(record.getIcon());
-                vo.setEmail(record.getEmail());
-                vo.setStatus(record.getStatus());
-
+                SysUserVo vo = SysUserVo.of(record);
                 Long creatorId = record.getCreatorId();
                 if (creatorId != null && creatorId.compareTo(0L) > 0) {
                     vo.setCreatorId(String.valueOf(creatorId));
                     vo.setCreatorName(userNameMap.get(creatorId));
                 }
-
                 vo.setOrgId(String.valueOf(record.getOrgId()));
                 vo.setOrgName(orgNameMap.get(record.getOrgId()));
-
-                if (record.getLastLoginTime() != null) {
-                    vo.setLastLoginTime(DateUtils.format(record.getLastLoginTime()));
-                }
-                vo.setCreateTime(DateUtils.format(record.getCreateTime()));
                 List<SysUserRole> roles = roleMap.get(record.getId());
                 if (CollectionUtils.isNotEmpty(roles)) {
                     List<Pair<String, String>> pairs = new ArrayList<>();
@@ -324,4 +317,5 @@ public class SysUserMgr {
                                   .map(SysUserRole::getRoleId)
                                   .collect(Collectors.toList());
     }
+
 }

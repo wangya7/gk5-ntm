@@ -8,7 +8,7 @@ import wang.bannong.gk5.ntm.iam.common.dto.SysRoleDto;
 import wang.bannong.gk5.ntm.iam.common.dto.SysTopicDto;
 import wang.bannong.gk5.ntm.iam.common.dto.SysUserDto;
 
-public interface IamService {
+public interface IamClient {
 
     /**
      * 判断管理员是否可以访问该Topic
@@ -44,6 +44,7 @@ public interface IamService {
     NtmResult deleteRole(SysRoleDto dto);
 
     /***** 人员管理 *****/
+    NtmResult login(SysUserDto dto);
     NtmResult queryUser(SysUserDto dto);
     NtmResult addUser(SysUserDto dto);
     NtmResult modifyUser(SysUserDto dto);
