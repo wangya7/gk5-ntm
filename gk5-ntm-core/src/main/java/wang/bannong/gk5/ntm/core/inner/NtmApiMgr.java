@@ -248,6 +248,15 @@ public class NtmApiMgr {
         return NtmResult.SUCCESS;
     }
 
+
+    @Transactional
+    public NtmResult updateApiReturn(ApiDto dto) throws Exception {
+        NtmApi record = queryById(dto.getApiId());
+        record.setResult(dto.getResult());
+        masterNtmApiDao.updateById(record);
+        return NtmResult.SUCCESS;
+    }
+
     public NtmResult apiParamList(ApiParamDto dto) throws Exception {
         log.info("query api-params,dto={}", dto);
         LambdaQueryWrapper<NtmApiParam> wrapper = new LambdaQueryWrapper<>();
