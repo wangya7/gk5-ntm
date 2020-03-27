@@ -23,7 +23,7 @@ public class InnerApiUpdateReturn implements BaseInnerService {
     public NtmResult api(NtmInnerRequest innerRequest) {
         ApiDto dto = DynamicDto.of(innerRequest).get(ApiDto.class);
         try {
-            return ntmApiMgr.addApi(dto);
+            return ntmApiMgr.updateApiReturn(dto);
         } catch (Exception e) {
             log.error("更新接口返回值报错，dto={}，异常信息：", dto, e);
             throw new NtmException(e);
