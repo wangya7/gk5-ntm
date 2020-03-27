@@ -20,7 +20,7 @@ import wang.bannong.gk5.ntm.common.model.Subject;
 @Slf4j
 public class LoginService {
     public static NtmResult api(NtmInnerRequest innerRequest) {
-        NtmApi ntmApiInfo =innerRequest.getNtmApi();
+        NtmApi ntmApiInfo = innerRequest.getNtmApi();
         NtmRequest ntmRequest = innerRequest.getRequest();
         String apiUnique = ntmApiInfo.getUnique();
         NtmResult result = NtmRpcClient.invoke(ntmApiInfo.getInnerInterface(), ntmApiInfo.getInnerMethod(),
@@ -29,12 +29,11 @@ public class LoginService {
             return result;
         }
         HashMap<String, Object> data = result.getData();
+        log.info(">>>>> login[{}], data[{}]", ntmApiInfo.getUnique(), data);
         Subject subject = new Subject();
         subject.setId((Long) data.get(ApiConfig.ID));
         subject.setMobile((String) data.get(ApiConfig.MOBILE));
         subject.setName((String) data.get(ApiConfig.NICK));
-
-
         AuthTokenHandler.creteAuthToken(subject,
                 apiUnique.equals(ApiConfig.LOGIN_API) ? AuthToken.Role.user : AuthToken.Role.admin,
                 null, ntmRequest);
