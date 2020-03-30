@@ -136,6 +136,16 @@ public class DynamicDto implements Serializable {
         return v != null ? Integer.valueOf(v) : 0;
     }
 
+    public byte getByteValue(String key) {
+        String v = get(key);
+        return v != null ? Byte.parseByte(v) : 0;
+    }
+
+    public Byte getByte(String key) {
+        String v = get(key);
+        return v != null ? Byte.valueOf(v) : 0;
+    }
+
     public long getLongValue(String key) {
         String v = get(key);
         return v != null ? Long.parseLong(v) : 0;
