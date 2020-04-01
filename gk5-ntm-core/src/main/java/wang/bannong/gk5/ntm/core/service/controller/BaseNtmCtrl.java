@@ -47,16 +47,16 @@ public class BaseNtmCtrl {
         NtmResult domain = RequestHandler.checkAndConvert2NtmRequest(servletRequest);
         if (!domain.isSuccess())
             return log(NtmResponse.builder(domain).builder());
+        return apix(domain.getData());
+    }
 
-        NtmRequest request = domain.getData();
-
+    public NtmResponse apix(NtmRequest request) {
         NtmInnerRequest innerRequest = NtmInnerRequest.of(request);
-
         // 1. check ntmApi
         if (null == apiHandler) {
             apiHandler = SpringBeanUtils.getBean("apiHandler", ApiHandler.class);
         }
-        domain = apiHandler.checkApi(request.getApi(), request.getV(), request.getAppid());
+        NtmResult domain = apiHandler.checkApi(request.getApi(), request.getV(), request.getAppid());
         if (!domain.isSuccess())
             return persistence(request, NtmResponse.builder(domain).builder(), null);
         NtmApi ntmApi = domain.getData();
