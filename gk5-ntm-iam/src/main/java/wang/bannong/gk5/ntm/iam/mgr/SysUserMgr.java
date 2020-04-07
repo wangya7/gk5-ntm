@@ -101,6 +101,9 @@ public class SysUserMgr {
 
     public NtmResult login(SysUserDto dto) throws Exception {
         SysUser user = queryByMobile(dto.getMobile());
+        if (user == null) {
+            return NtmResult.fail("管理员信息不存在");
+        }
         if (user.getPassword().equals(MD5Util.md5LowerCase(dto.getMobile() + dto.getPassword()))) {
             return NtmResult.success(user);
         }
