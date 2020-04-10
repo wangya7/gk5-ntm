@@ -27,6 +27,7 @@ public class DynamicDto implements Serializable {
 
     private long                subjectId = 0;
     private String              channel;
+    private String              ip;
     private int                 pageNum   = 1;
     private int                 pageSize  = 10;
     private Map<String, String> params;
@@ -59,6 +60,23 @@ public class DynamicDto implements Serializable {
         dto.setSubjectId(entityId);
         dto.setChannel(channel);
         dto.setParams(params);
+        if (params != null) {
+            if (StringUtils.isNotBlank(params.get(NtmConstant.PAGE_NUM))) {
+                dto.setPageNum(Integer.parseInt(params.get(NtmConstant.PAGE_NUM)));
+            }
+            if (StringUtils.isNotBlank(params.get(NtmConstant.PAGE_SIZE))) {
+                dto.setPageSize(Integer.parseInt(params.get(NtmConstant.PAGE_SIZE)));
+            }
+        }
+        return dto;
+    }
+
+    public static DynamicDto of(long entityId, Map<String, String> params, String channel, String ip) {
+        DynamicDto dto = new DynamicDto();
+        dto.setSubjectId(entityId);
+        dto.setChannel(channel);
+        dto.setParams(params);
+        dto.setIp(ip);
         if (params != null) {
             if (StringUtils.isNotBlank(params.get(NtmConstant.PAGE_NUM))) {
                 dto.setPageNum(Integer.parseInt(params.get(NtmConstant.PAGE_NUM)));
@@ -116,6 +134,14 @@ public class DynamicDto implements Serializable {
 
     public void setChannel(String channel) {
         this.channel = channel;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     // ---------------------------------------------------------------------------------------------
