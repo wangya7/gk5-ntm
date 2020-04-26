@@ -1,6 +1,23 @@
 ### 网关NTM
 开箱即用的网关集成，支持单机和分布式部署。
 
+### 项目模块
+* gk5-ntm-common: 基础包
+* gk5-ntm-core: 网关的核心包
+* gk5-ntm-iam: 权限控制
+* gk5-ntm-sample: 案例
+* gk5-ntm-doc: 文档
+
+### 感谢【排名不分先后】
+* spring
+* mybatis
+* jackson
+* mybatis-plus
+* dubbo
+* fastjson
+
+感谢其他优秀的开源社区和优秀开发者
+
 ### 业务统一接口
 #### 请求路径
 ```

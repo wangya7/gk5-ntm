@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
+import wang.bannong.gk5.ntm.common.model.NtmRequest;
 
 /**
  * Created by bn. on 2019/8/12 3:56 PM
@@ -27,16 +28,17 @@ public class DynamicDto implements Serializable {
 
     private long                subjectId = 0;
     private String              channel;
-    private String              ip;
     private int                 pageNum   = 1;
     private int                 pageSize  = 10;
     private Map<String, String> params;
+    private NtmRequest          request;
 
     private DynamicDto() {
     }
 
     public static DynamicDto of(NtmInnerRequest innerRequest) {
-        return of(innerRequest.getSubjectId(), innerRequest.getDataStore(), innerRequest.getRequest().getChannel());
+        return of(innerRequest.getSubjectId(), innerRequest.getDataStore(),
+                innerRequest.getRequest().getChannel(), innerRequest.getRequest());
     }
 
     public static DynamicDto of(long entityId, Map<String, String> params) {
@@ -71,12 +73,12 @@ public class DynamicDto implements Serializable {
         return dto;
     }
 
-    public static DynamicDto of(long entityId, Map<String, String> params, String channel, String ip) {
+    public static DynamicDto of(long entityId, Map<String, String> params, String channel, NtmRequest request) {
         DynamicDto dto = new DynamicDto();
         dto.setSubjectId(entityId);
         dto.setChannel(channel);
         dto.setParams(params);
-        dto.setIp(ip);
+        dto.setRequest(request);
         if (params != null) {
             if (StringUtils.isNotBlank(params.get(NtmConstant.PAGE_NUM))) {
                 dto.setPageNum(Integer.parseInt(params.get(NtmConstant.PAGE_NUM)));
@@ -136,12 +138,12 @@ public class DynamicDto implements Serializable {
         this.channel = channel;
     }
 
-    public String getIp() {
-        return ip;
+    public NtmRequest getRequest() {
+        return request;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setRequest(NtmRequest request) {
+        this.request = request;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -310,6 +312,7 @@ public class DynamicDto implements Serializable {
         return t;
     }
 
+
     @Override
     public String toString() {
         return "DynamicDto{" +
@@ -318,6 +321,7 @@ public class DynamicDto implements Serializable {
                 ", pageNum=" + pageNum +
                 ", pageSize=" + pageSize +
                 ", params=" + params +
+                ", request=" + request +
                 '}';
     }
 
