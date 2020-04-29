@@ -36,14 +36,17 @@ public class LoginService {
         Long subjectId = (Long) data.get(ApiConfig.ID);
         subject.setId(subjectId);
         subject.setMobile((String) data.get(ApiConfig.MOBILE));
-        subject.setName((String) data.get(ApiConfig.NICK));
+        subject.setName((String) data.get(ApiConfig.NAME));
         AuthTokenHandler.creteAuthToken(subject,
                 apiUnique.equals(ApiConfig.LOGIN_API) ? AuthToken.Role.user : AuthToken.Role.admin,
                 null, ntmRequest);
 
         // 重新构造登录的返回信息
-        SubjectExtend extend = (SubjectExtend) subject;
+        SubjectExtend extend = new SubjectExtend();
         extend.setId(null);
+        extend.setIcon((String) data.get(ApiConfig.ICON));
+        extend.setMobile(subject.getMobile());
+        extend.setName(subject.getName());
         if (data.get(SubjectExtend.EXTEND) != null) {
             extend.setExtend((Map<String, String>) data.get(SubjectExtend.EXTEND));
         }
