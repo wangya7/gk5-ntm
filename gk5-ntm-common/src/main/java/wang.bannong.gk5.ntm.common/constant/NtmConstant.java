@@ -30,4 +30,12 @@ public interface NtmConstant {
     String BASE_TEST_URL = "BASE_TEST_URL";
 
     String EXP_MSG = "服务开小差啦，稍后重试";
+
+    String MD5_SUBJECT_ID = "md5SubjectId";
+    String SUBJECT_ID     = "subjectId";
+    String SUBJECT_NICK   = "subjectNick";
+    String SUBJECT_ICON   = "subjectIcon";
+    String SUBJECT_NAME   = "subjectName";
+    String SUBJECT_MOBILE = "subjectMobile";
+    String SUBJECT_LEVEL  = "subjectLevel";
 }

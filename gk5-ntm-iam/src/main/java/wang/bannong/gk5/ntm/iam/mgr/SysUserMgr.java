@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.PaginationResult;
+import wang.bannong.gk5.ntm.common.model.SubjectExtend;
 import wang.bannong.gk5.ntm.iam.common.constant.IamConstant;
 import wang.bannong.gk5.ntm.iam.common.domain.SysRole;
 import wang.bannong.gk5.ntm.iam.common.domain.SysUser;
@@ -105,7 +106,12 @@ public class SysUserMgr {
             return NtmResult.fail("管理员信息不存在");
         }
         if (user.getPassword().equals(MD5Util.md5LowerCase(dto.getMobile() + dto.getPassword()))) {
-            return NtmResult.success(user);
+            SubjectExtend subject = new SubjectExtend();
+            subject.setId(user.getId());
+            subject.setMobile(user.getMobile());
+            subject.setName(user.getName());
+            subject.setIcon(user.getIcon());
+            return NtmResult.success(subject);
         }
         return NtmResult.fail("手机号码密码不匹配");
     }

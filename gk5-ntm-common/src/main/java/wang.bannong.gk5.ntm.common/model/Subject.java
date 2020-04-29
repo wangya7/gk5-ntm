@@ -1,6 +1,7 @@
 package wang.bannong.gk5.ntm.common.model;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import lombok.Data;
 

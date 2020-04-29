@@ -1,10 +1,9 @@
 package wang.bannong.gk5.ntm.core.service;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
-import wang.bannong.gk5.ntm.core.handler.AuthTokenHandler;
-import wang.bannong.gk5.ntm.core.rpc.NtmRpcClient;
 import wang.bannong.gk5.ntm.common.constant.ApiConfig;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.dto.DynamicDto;
@@ -13,6 +12,9 @@ import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
 import wang.bannong.gk5.ntm.common.model.NtmRequest;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.Subject;
+import wang.bannong.gk5.ntm.common.model.SubjectExtend;
+import wang.bannong.gk5.ntm.core.handler.AuthTokenHandler;
+import wang.bannong.gk5.ntm.core.rpc.NtmRpcClient;
 
 /**
  * Created by bn. on 2019/10/18 4:29 PM
@@ -31,12 +33,20 @@ public class LoginService {
         HashMap<String, Object> data = result.getData();
         log.info(">>>>> login[{}], data[{}]", ntmApiInfo.getUnique(), data);
         Subject subject = new Subject();
-        subject.setId((Long) data.get(ApiConfig.ID));
+        Long subjectId = (Long) data.get(ApiConfig.ID);
+        subject.setId(subjectId);
         subject.setMobile((String) data.get(ApiConfig.MOBILE));
         subject.setName((String) data.get(ApiConfig.NICK));
         AuthTokenHandler.creteAuthToken(subject,
                 apiUnique.equals(ApiConfig.LOGIN_API) ? AuthToken.Role.user : AuthToken.Role.admin,
                 null, ntmRequest);
-        return result;
+
+        // 重新构造登录的返回信息
+        SubjectExtend extend = (SubjectExtend) subject;
+        extend.setId(null);
+        if (data.get(SubjectExtend.EXTEND) != null) {
+            extend.setExtend((Map<String, String>) data.get(SubjectExtend.EXTEND));
+        }
+        return NtmResult.success(extend);
     }
 }
