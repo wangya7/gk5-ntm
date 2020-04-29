@@ -42,6 +42,7 @@ public interface IamClient {
     NtmResult addRole(SysRoleDto dto);
     NtmResult modifyRole(SysRoleDto dto);
     NtmResult deleteRole(SysRoleDto dto);
+    NtmResult queryAllRoleSet(SysRoleDto dto);
 
     /***** 人员管理 *****/
     NtmResult login(SysUserDto dto);

@@ -24,6 +24,7 @@ import wang.bannong.gk5.ntm.iam.common.dto.SysRoleDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysRoleVo;
 import wang.bannong.gk5.ntm.iam.dao.SysRoleDao;
 import wang.bannong.gk5.util.DateUtils;
+import wang.bannong.gk5.util.domain.Pair;
 
 @Slf4j
 @Component
@@ -93,6 +94,24 @@ public class SysRoleMgr {
         }
 
         return NtmResult.success(PaginationResult.empty(pageNum, pageSize));
+    }
+
+    public NtmResult querySysRoleSet(SysRoleDto dto) throws Exception {
+        int pageNum = 1, pageSize = 1 << 10;
+        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysRole::getStatus, IamConstant.EFF);
+        if (dto.getName() != null) {
+            wrapper.like(SysRole::getName, dto.getName());
+        }
+        List<SysRole> list = slaveSysRoleDao.selectList(wrapper);
+        List<Pair<String, String>> pairs = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (SysRole sysRole : list) {
+                pairs.add(Pair.of(String.valueOf(sysRole.getId()), sysRole.getName()));
+            }
+
+        }
+        return NtmResult.success(pairs);
     }
 
     @Transactional

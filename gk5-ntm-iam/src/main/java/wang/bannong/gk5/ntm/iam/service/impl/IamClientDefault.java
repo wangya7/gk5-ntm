@@ -209,6 +209,16 @@ public class IamClientDefault implements IamClient {
         }
     }
 
+    @Override
+    public NtmResult queryAllRoleSet(SysRoleDto dto) {
+        try {
+            return sysRoleMgr.querySysRoleSet(dto);
+        } catch (Exception e) {
+            log.error("查询角色集合报错，dto={}，异常信息：", dto, e);
+            throw new RuntimeException(e);
+        }
+    }
+
     /***** 人员管理 *****/
 
     @Override
