@@ -71,7 +71,7 @@ public class SysAuthMgr {
                                   .map(i -> SysMenuVo.of(i, set.contains(i.getId())))
                                   .collect(Collectors.toList());
 
-        Map<Long, List<SysMenuVo>> _2_3 = menus.stream()
+        Map<String, List<SysMenuVo>> _2_3 = menus.stream()
                                                .filter(i -> i.getType().equals(IamConstant.MENU_BUTTON))
                                                .map(i -> SysMenuVo.of(i, set.contains(i.getId())))
                                                .collect(Collectors.groupingBy(SysMenuVo::getPid));
@@ -93,7 +93,7 @@ public class SysAuthMgr {
                                   .sorted(Comparator.comparingInt(SysMenuVo::getSort))
                                   .collect(Collectors.toList());
 
-        Map<Long, List<SysMenuVo>> _1_2 = _2.stream()
+        Map<String, List<SysMenuVo>> _1_2 = _2.stream()
                                             .sorted(Comparator.comparingInt(SysMenuVo::getSort))
                                             .collect(Collectors.groupingBy(SysMenuVo::getPid));
         for (SysMenuVo item : _1) {

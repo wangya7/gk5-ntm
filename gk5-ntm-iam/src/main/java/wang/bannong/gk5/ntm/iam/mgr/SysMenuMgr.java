@@ -3,12 +3,14 @@ package wang.bannong.gk5.ntm.iam.mgr;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.PaginationResult;
+import wang.bannong.gk5.ntm.iam.common.constant.IamConstant;
 import wang.bannong.gk5.ntm.iam.common.domain.SysMenu;
+import wang.bannong.gk5.ntm.iam.common.domain.SysRoleMenu;
 import wang.bannong.gk5.ntm.iam.common.dto.SysMenuDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysMenuVo;
 import wang.bannong.gk5.ntm.iam.dao.SysMenuDao;
@@ -73,6 +77,56 @@ public class SysMenuMgr {
 
 
     //************* 接口操作
+
+    public NtmResult menuTree() throws Exception {
+        List<SysMenu> menus = allMenus();
+        log.info("menus={}", menus);
+        List<SysMenuVo> _2 = menus.stream()
+                                  .filter(i -> i.getType().equals(IamConstant.MENU_SECOND))
+                                  .map(i -> SysMenuVo.of(i))
+                                  .collect(Collectors.toList());
+
+        Map<String, List<SysMenuVo>> _2_3 = menus.stream()
+                                                 .filter(i -> i.getType().equals(IamConstant.MENU_BUTTON))
+                                                 .map(i -> SysMenuVo.of(i))
+                                                 .collect(Collectors.groupingBy(SysMenuVo::getPid));
+
+        if (MapUtils.isNotEmpty(_2_3)) {
+            for (SysMenuVo item : _2) {
+                List<SysMenuVo> tmp = _2_3.get(item.getId());
+                if (CollectionUtils.isNotEmpty(tmp)) {
+                    item.setHasChildren(true);
+                    item.setChildren(tmp.stream()
+                                        .sorted(Comparator.comparingInt(SysMenuVo::getSort))
+                                        .collect(Collectors.toList()));
+                } else {
+                    item.setHasChildren(false);
+                }
+            }
+        }
+
+        List<SysMenuVo> _1 = menus.stream()
+                                  .filter(i -> i.getType().equals(IamConstant.MENU_FIRST))
+                                  .map(i -> SysMenuVo.of(i))
+                                  .sorted(Comparator.comparingInt(SysMenuVo::getSort))
+                                  .collect(Collectors.toList());
+
+        Map<String, List<SysMenuVo>> _1_2 = _2.stream()
+                                              .sorted(Comparator.comparingInt(SysMenuVo::getSort))
+                                              .collect(Collectors.groupingBy(SysMenuVo::getPid));
+        for (SysMenuVo item : _1) {
+            List<SysMenuVo> tmp = _1_2.get(item.getId());
+            if (CollectionUtils.isNotEmpty(tmp)) {
+                item.setChildren(tmp);
+                item.setHasChildren(true);
+            } else {
+                item.setHasChildren(false);
+            }
+        }
+
+        return NtmResult.success(_1);
+    }
+
 
     public NtmResult querySysMenu(SysMenuDto dto) throws Exception {
         int pageNum = 1, pageSize = 1 << 10;
@@ -129,6 +183,9 @@ public class SysMenuMgr {
     public NtmResult modifySysMenu(SysMenuDto dto) throws Exception {
         Long id = dto.getId();
         SysMenu record = masterSysMenuDao.selectById(id);
+        if (record == null) {
+            return NtmResult.fail("菜单不存在");
+        }
         LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysMenu::getPid, record.getPid())
                .eq(SysMenu::getName, dto.getName());

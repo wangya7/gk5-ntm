@@ -1,8 +1,10 @@
 package wang.bannong.gk5.ntm.iam.common.dto;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(callSuper = true)
 public class SysMenuDto extends SysBaseDto {
     private static final long serialVersionUID = 4263245684749115165L;
 
@@ -14,3 +16,5 @@ public class SysMenuDto extends SysBaseDto {
     private Integer sort;
 
 }
+
+

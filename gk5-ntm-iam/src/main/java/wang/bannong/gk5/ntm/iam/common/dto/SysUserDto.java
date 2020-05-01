@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(callSuper = true)
 public class SysUserDto extends SysBaseDto {
     private static final long serialVersionUID = -987835963719428474L;
 

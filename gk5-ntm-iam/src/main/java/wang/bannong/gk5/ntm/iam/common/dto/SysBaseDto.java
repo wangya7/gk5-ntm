@@ -3,6 +3,7 @@ package wang.bannong.gk5.ntm.iam.common.dto;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 public class SysBaseDto implements Serializable {

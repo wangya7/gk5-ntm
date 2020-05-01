@@ -1,8 +1,10 @@
 package wang.bannong.gk5.ntm.iam.common.dto;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(callSuper = true)
 public class SysOrgDto extends SysBaseDto {
     private static final long serialVersionUID = -200846518034738067L;
 

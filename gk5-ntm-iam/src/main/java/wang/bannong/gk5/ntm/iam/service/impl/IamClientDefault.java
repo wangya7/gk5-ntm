@@ -86,6 +86,16 @@ public class IamClientDefault implements IamClient {
     /***** 菜单管理 *****/
 
     @Override
+    public NtmResult allMenuList(SysMenuDto dto) {
+        try {
+            return sysMenuMgr.menuTree();
+        } catch (Exception e) {
+            log.error("获取整颗菜单，dto={}，异常信息：", dto, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public NtmResult queryMenu(SysMenuDto dto) {
         try {
             return sysMenuMgr.querySysMenu(dto);
