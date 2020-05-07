@@ -293,12 +293,22 @@ public class IamClientDefault implements IamClient {
 
     @Override
     public NtmResult modifyPasswd(SysUserDto dto) {
-        return null;
+        try {
+            return sysUserMgr.modifyPasswd(dto);
+        } catch (Exception e) {
+            log.error("修改管理员密码报错，dto={}，异常信息：", dto, e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public NtmResult forgetPasswd(SysUserDto dto) {
-        return null;
+        try {
+            return sysUserMgr.forgetPasswd(dto);
+        } catch (Exception e) {
+            log.error("忘记管理员报错，dto={}，异常信息：", dto, e);
+            throw new RuntimeException(e);
+        }
     }
 
     /***** 权限管理 *****/
