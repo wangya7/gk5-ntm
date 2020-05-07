@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import hz.qxbn.taoism.administrative.AdministrativeUtils;
 import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
-import wang.bannong.gk5.ntm.common.model.PaginationResult;
 import wang.bannong.gk5.ntm.iam.common.domain.SysOrg;
 import wang.bannong.gk5.ntm.iam.common.dto.SysOrgDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysOrgVo;
@@ -60,42 +59,58 @@ public class SysOrgMgr {
         return Collections.EMPTY_MAP;
     }
 
+    public List<SysOrg> allOrg() throws Exception {
+        return masterSysOrgDao.allOrg();
+    }
+
     //************* 接口操作
 
     public NtmResult querySysOrg(SysOrgDto dto) throws Exception {
-        int pageNum = 1, pageSize = 1 << 10;
-        LambdaQueryWrapper<SysOrg> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysOrg::getPid, dto.getPid());
-        List<SysOrg> list = slaveSysOrgDao.selectList(wrapper);
-
+        List<SysOrg> list = allOrg();
         if (CollectionUtils.isNotEmpty(list)) {
-            pageSize = list.size();
-            LambdaQueryWrapper<SysOrg> wrapper2 = new LambdaQueryWrapper<>();
-            wrapper2.in(SysOrg::getPid, list.stream().map(SysOrg::getId).collect(Collectors.toList()));
-            Map<Long, List<SysOrg>> listMap = slaveSysOrgDao.selectList(wrapper)
-                                                            .stream()
-                                                            .collect(Collectors.groupingBy(SysOrg::getPid));
-            List<SysOrgVo> vos = new ArrayList<>();
-            for (SysOrg record : list) {
-                SysOrgVo vo = new SysOrgVo();
-                vo.setId(String.valueOf(record.getId()));
-                vo.setPid(String.valueOf(record.getPid()));
-                vo.setName(record.getName());
-                vo.setNumber(record.getNumber());
-                vo.setProvince(AdministrativeUtils.of(record.getProvince()));
-                vo.setCity(AdministrativeUtils.of(record.getCity()));
-                vo.setArea(AdministrativeUtils.of(record.getArea()));
-                vo.setStreet(AdministrativeUtils.of(record.getStreet()));
-                vo.setAddress(record.getAddress());
-                vo.setType(record.getType());
-                vo.setHasChildren(CollectionUtils.isNotEmpty(listMap.get(record.getId())));
-                vo.setCreateTime(DateUtils.format(record.getCreateTime()));
-                vos.add(vo);
-            }
-            return NtmResult.success(PaginationResult.of(pageNum, pageSize, pageNum, pageSize, vos));
-        }
+            Map<Long, List<SysOrg>> listMap = list.parallelStream()
+                                                  .collect(Collectors.groupingBy(SysOrg::getPid));
+            List<SysOrg> sysOrgsFirst = list.stream()
+                                            .filter(i -> i.getPid().compareTo(0L) == 0)
+                                            .collect(Collectors.toList());
 
-        return NtmResult.success(PaginationResult.empty(pageNum, pageSize));
+            List<SysOrgVo> vos = new ArrayList<>();
+            for (SysOrg record : sysOrgsFirst) {
+                vos.add(buildLoop(record, listMap));
+            }
+            return NtmResult.success(vos);
+        }
+        return NtmResult.success(Collections.EMPTY_LIST);
+    }
+
+
+    private SysOrgVo buildLoop(SysOrg record, Map<Long, List<SysOrg>> listMap) {
+        SysOrgVo vo = new SysOrgVo();
+        vo.setId(String.valueOf(record.getId()));
+        vo.setPid(String.valueOf(record.getPid()));
+        vo.setName(record.getName());
+        vo.setNumber(record.getNumber());
+        vo.setProvince(AdministrativeUtils.of(record.getProvince()));
+        vo.setCity(AdministrativeUtils.of(record.getCity()));
+        vo.setArea(AdministrativeUtils.of(record.getArea()));
+        vo.setStreet(AdministrativeUtils.of(record.getStreet()));
+        vo.setAddress(record.getAddress());
+        vo.setType(record.getType());
+        vo.setCreateTime(DateUtils.format(record.getCreateTime()));
+
+        List<SysOrg> children = listMap.get(record.getId());
+        if (CollectionUtils.isNotEmpty(children)) {
+            List<SysOrgVo> childrenVos = new ArrayList<>();
+            for (SysOrg sysOrgInner : children) {
+                childrenVos.add(buildLoop(sysOrgInner, listMap));
+            }
+            vo.setChildren(childrenVos);
+            vo.setHasChildren(true);
+        } else {
+            vo.setChildren(null);
+            vo.setHasChildren(false);
+        }
+        return vo;
     }
 
     @Transactional

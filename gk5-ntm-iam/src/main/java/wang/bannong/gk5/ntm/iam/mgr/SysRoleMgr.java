@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
-import wang.bannong.gk5.ntm.common.model.PaginationResult;
 import wang.bannong.gk5.ntm.iam.common.constant.IamConstant;
 import wang.bannong.gk5.ntm.iam.common.domain.SysRole;
 import wang.bannong.gk5.ntm.iam.common.dto.SysRoleDto;
@@ -29,7 +28,6 @@ import wang.bannong.gk5.util.domain.Pair;
 @Slf4j
 @Component
 public class SysRoleMgr {
-
 
     @Autowired
     private SysRoleDao masterSysRoleDao;
@@ -62,42 +60,57 @@ public class SysRoleMgr {
         return Collections.EMPTY_MAP;
     }
 
+    public List<SysRole> allRole() throws Exception {
+        return masterSysRoleDao.allRole();
+    }
+
     //************* 接口操作
 
     public NtmResult querySysRole(SysRoleDto dto) throws Exception {
-        int pageNum = 1, pageSize = 1 << 10;
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRole::getPid, dto.getPid())
-               .eq(SysRole::getStatus, IamConstant.EFF);
-        List<SysRole> list = slaveSysRoleDao.selectList(wrapper);
-
+        List<SysRole> list = allRole();
         if (CollectionUtils.isNotEmpty(list)) {
-            pageSize = list.size();
-            LambdaQueryWrapper<SysRole> wrapper2 = new LambdaQueryWrapper<>();
-            wrapper2.eq(SysRole::getStatus, IamConstant.EFF)
-                    .in(SysRole::getPid, list.stream().map(SysRole::getId).collect(Collectors.toList()));
-            Map<Long, List<SysRole>> listMap = slaveSysRoleDao.selectList(wrapper)
-                                                              .stream()
-                                                              .collect(Collectors.groupingBy(SysRole::getPid));
+            Map<Long, List<SysRole>> listMap = list.stream()
+                                                   .collect(Collectors.groupingBy(SysRole::getPid));
+
+
+            List<SysRole> sysOrgsFirst = list.stream()
+                                             .filter(i -> i.getPid().compareTo(0L) == 0)
+                                             .collect(Collectors.toList());
+
             List<SysRoleVo> vos = new ArrayList<>();
-            for (SysRole record : list) {
-                SysRoleVo vo = new SysRoleVo();
-                vo.setId(String.valueOf(record.getId()));
-                vo.setPid(String.valueOf(record.getPid()));
-                vo.setName(record.getName());
-                vo.setStatus(record.getStatus());
-                vo.setHasChildren(CollectionUtils.isNotEmpty(listMap.get(record.getId())));
-                vo.setCreateTime(DateUtils.format(record.getCreateTime()));
-                vos.add(vo);
+            for (SysRole record : sysOrgsFirst) {
+                vos.add(buildLoop(record, listMap));
             }
-            return NtmResult.success(PaginationResult.of(pageNum, pageSize, pageNum, pageSize, vos));
+            return NtmResult.success(vos);
         }
 
-        return NtmResult.success(PaginationResult.empty(pageNum, pageSize));
+        return NtmResult.success(Collections.EMPTY_LIST);
+    }
+
+    private SysRoleVo buildLoop(SysRole record, Map<Long, List<SysRole>> listMap) {
+        SysRoleVo vo = new SysRoleVo();
+        vo.setId(String.valueOf(record.getId()));
+        vo.setPid(String.valueOf(record.getPid()));
+        vo.setName(record.getName());
+        vo.setStatus(record.getStatus());
+        vo.setCreateTime(DateUtils.format(record.getCreateTime()));
+
+        List<SysRole> children = listMap.get(record.getId());
+        if (CollectionUtils.isNotEmpty(children)) {
+            List<SysRoleVo> childrenVos = new ArrayList<>();
+            for (SysRole sysOrgInner : children) {
+                childrenVos.add(buildLoop(sysOrgInner, listMap));
+            }
+            vo.setChildren(childrenVos);
+            vo.setHasChildren(true);
+        } else {
+            vo.setChildren(null);
+            vo.setHasChildren(false);
+        }
+        return vo;
     }
 
     public NtmResult querySysRoleSet(SysRoleDto dto) throws Exception {
-        int pageNum = 1, pageSize = 1 << 10;
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysRole::getStatus, IamConstant.EFF);
         if (dto.getName() != null) {
@@ -137,26 +150,29 @@ public class SysRoleMgr {
 
     /**
      * pid不允许修改
-     *
-     * @param dto
-     * @return
-     * @throws Exception
      */
     @Transactional
     public NtmResult modifySysRole(SysRoleDto dto) throws Exception {
         Long id = dto.getId();
         SysRole record = masterSysRoleDao.selectById(id);
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRole::getPid, record.getPid())
-               .eq(SysRole::getName, dto.getName());
-
-        SysRole SysRoles = masterSysRoleDao.selectOne(wrapper);
-        if (SysRoles != null && !SysRoles.getId().equals(id)) {
-            return NtmResult.fail("角色名称重复，重新操作");
+        if (record == null) {
+            return NtmResult.fail("角色不存在");
         }
 
-        record.setName(dto.getName());
-        record.setStatus(dto.getStatus());
+        // 状态和其他的信息不可以同时修改
+        if (dto.getStatus() != null) {
+            record.setStatus(dto.getStatus());
+        } else {
+            LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(SysRole::getPid, record.getPid())
+                   .eq(SysRole::getName, dto.getName());
+
+            SysRole SysRoles = masterSysRoleDao.selectOne(wrapper);
+            if (SysRoles != null && !SysRoles.getId().equals(id)) {
+                return NtmResult.fail("角色名称重复，重新操作");
+            }
+            record.setName(dto.getName());
+        }
         record.setModifyTime(new Date());
         masterSysRoleDao.updateById(record);
         return NtmResult.success(record);

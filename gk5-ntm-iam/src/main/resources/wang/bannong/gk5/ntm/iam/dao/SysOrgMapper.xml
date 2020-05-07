@@ -18,4 +18,7 @@
   <sql id="Base_Column_List">
     id, pid, name, number, address, street, area, city, province, type, create_time, modify_time
   </sql>
+  <select id="allOrg" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from sys_org
+  </select>
 </mapper>

@@ -23,7 +23,6 @@ import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.PaginationResult;
 import wang.bannong.gk5.ntm.iam.common.constant.IamConstant;
 import wang.bannong.gk5.ntm.iam.common.domain.SysMenu;
-import wang.bannong.gk5.ntm.iam.common.domain.SysRoleMenu;
 import wang.bannong.gk5.ntm.iam.common.dto.SysMenuDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysMenuVo;
 import wang.bannong.gk5.ntm.iam.dao.SysMenuDao;

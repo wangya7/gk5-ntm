@@ -1,6 +1,7 @@
 package wang.bannong.gk5.ntm.iam.common.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import hz.qxbn.taoism.administrative.model.Administrative;
 import lombok.Data;
@@ -21,5 +22,6 @@ public class SysOrgVo implements Serializable {
     private Byte           type;
     private Byte           status;
     private Boolean        hasChildren;
+    private List<SysOrgVo> children;
     private String         createTime;
 }
