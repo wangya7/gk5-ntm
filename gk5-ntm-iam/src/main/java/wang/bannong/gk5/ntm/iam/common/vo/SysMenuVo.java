@@ -15,7 +15,7 @@ public class SysMenuVo implements Serializable {
     private String          name;
     private Byte            type;      // 1-一级菜单 2-二级菜单 3-菜单中的按钮
     private Integer         sort;
-    private Boolean         visible;
+    private Boolean         visible = false;
     private Boolean         hasChildren;
     private List<SysMenuVo> children;
 

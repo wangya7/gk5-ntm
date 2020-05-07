@@ -33,19 +33,11 @@ public class SysAuthMgr {
     @Autowired
     private SysUserMgr      sysUserMgr;
     @Autowired
-    private SysRoleMgr      sysRoleMgr;
-    @Autowired
     private SysMenuMgr      sysMenuMgr;
-    @Autowired
-    private SysTopicMgr     sysTopicMgr;
     @Autowired
     private SysRoleMenuDao  masterSysRoleMenuDao;
     @Autowired
     private SysRoleMenuDao  slaveSysRoleMenuDao;
-    @Autowired
-    private SysRoleTopicDao masterSysRoleTopicDao;
-    @Autowired
-    private SysRoleTopicDao slaveSysRoleTopicDao;
 
     public List<SysRoleMenu> queryRoleMenuByRoleId(Long roleId) throws Exception {
         return slaveSysRoleMenuDao.selectByRoleId(roleId);
@@ -59,17 +51,19 @@ public class SysAuthMgr {
      * 获取一个管理员对应的菜单权限
      */
     public NtmResult queryMyAuthMenu(Long adminId) throws Exception {
-        return authMenu(sysUserMgr.queryRoleIds(adminId));
+        List<SysMenuVo> sysMenuVos = authMenu(sysUserMgr.queryRoleIds(adminId));
+        return NtmResult.success(sysMenuVos);
     }
 
     /**
      * 获取一个角色对应的菜单权限
      */
     public NtmResult queryAuthMenu(Long roleId) throws Exception {
-        return authMenu(Collections.singletonList(roleId));
+        List<SysMenuVo> sysMenuVos = authMenu(Collections.singletonList(roleId));
+        return NtmResult.success(sysMenuVos);
     }
 
-    private  NtmResult authMenu(List<Long> roleIds) throws Exception {
+    private  List<SysMenuVo> authMenu(List<Long> roleIds) throws Exception {
         Set<Long> set = queryRoleMenuByRoleIds(roleIds)
                 .parallelStream()
                 .map(SysRoleMenu::getMenuId)
@@ -110,7 +104,7 @@ public class SysAuthMgr {
             item.setChildren(_1_2.get(item.getId()));
         }
 
-        return NtmResult.success(_1);
+        return _1;
     }
 
     @Transactional

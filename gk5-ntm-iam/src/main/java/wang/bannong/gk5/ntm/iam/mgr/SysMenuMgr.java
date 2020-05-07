@@ -155,17 +155,35 @@ public class SysMenuMgr {
     @Transactional
     public NtmResult addSysMenu(SysMenuDto dto) throws Exception {
         LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysMenu::getPid, dto.getPid())
+        Long pid = dto.getPid();
+        wrapper.eq(SysMenu::getPid, pid)
                .eq(SysMenu::getName, dto.getName());
 
         SysMenu record = masterSysMenuDao.selectOne(wrapper);
         if (record != null) {
             return NtmResult.fail("菜单名称重复，重新操作");
         }
+
+        Byte type = dto.getType();
+        if (pid.compareTo(0L) > 0) {
+            SysMenu sysMenu = queryById(pid);
+            if (sysMenu.getType().equals(IamConstant.MENU_FIRST) && !type.equals(IamConstant.MENU_SECOND)) {
+                return NtmResult.fail("一级菜单只能添加二级菜单");
+            }
+
+            if (sysMenu.getType().equals(IamConstant.MENU_SECOND) && !type.equals(IamConstant.MENU_BUTTON)) {
+                return NtmResult.fail("二级菜单只能添加按钮");
+            }
+
+            if (sysMenu.getType().equals(IamConstant.MENU_BUTTON)) {
+                return NtmResult.fail("菜单下禁止添加下级");
+            }
+        }
+
         record = new SysMenu();
         record.setPid(dto.getPid());
         record.setName(dto.getName());
-        record.setType(dto.getType());
+        record.setType(type);
         record.setSort(dto.getSort());
         record.setCreateTime(new Date());
         if (masterSysMenuDao.insert(record) > 0) {
