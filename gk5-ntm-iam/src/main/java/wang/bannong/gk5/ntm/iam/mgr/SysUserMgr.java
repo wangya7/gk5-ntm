@@ -1,5 +1,7 @@
 package wang.bannong.gk5.ntm.iam.mgr;
 
+import com.google.common.base.Splitter;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -31,6 +33,7 @@ import wang.bannong.gk5.ntm.iam.common.dto.SysUserDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysUserVo;
 import wang.bannong.gk5.ntm.iam.dao.SysUserDao;
 import wang.bannong.gk5.ntm.iam.dao.SysUserRoleDao;
+import wang.bannong.gk5.util.Constant;
 import wang.bannong.gk5.util.DateUtils;
 import wang.bannong.gk5.util.MD5Util;
 import wang.bannong.gk5.util.SnowFlakeGenerator;
@@ -193,12 +196,12 @@ public class SysUserMgr {
         record.setId(id);
         record.setName(dto.getName());
         record.setMobile(mobile);
-        record.setOrgId(record.getOrgId());
-        record.setIdentity(record.getIdentity());
+        record.setOrgId(dto.getOrgId());
+        record.setIdentity(dto.getIdentity());
         record.setPassword(MD5Util.md5LowerCase(mobile + dto.getPassword()));
-        record.setWorkNumber(record.getWorkNumber());
-        record.setIcon(record.getIcon());
-        record.setEmail(record.getEmail());
+        record.setWorkNumber(dto.getWorkNumber());
+        record.setIcon(dto.getIcon());
+        record.setEmail(dto.getEmail());
 
         record.setStatus(IamConstant.EFF);
         record.setLastLoginTime(null);
@@ -208,7 +211,11 @@ public class SysUserMgr {
         record.setModifyTime(now);
         if (masterSysUserDao.insert(record) > 0) {
             List<SysUserRole> userRoleList = new ArrayList<>();
-            for (Long roleId : dto.getRoleIds()) {
+            List<Long> roldIds = Splitter.on(Constant.COMMA).splitToList(dto.getRoleIds())
+                                         .stream()
+                                         .map(i -> Long.valueOf(i))
+                                         .collect(Collectors.toList());
+            for (Long roleId : roldIds) {
                 SysUserRole item = new SysUserRole();
                 item.setRoleId(roleId);
                 item.setUserId(id);
@@ -236,12 +243,12 @@ public class SysUserMgr {
 
         record.setName(dto.getName());
         record.setMobile(mobile);
-        record.setOrgId(record.getOrgId());
-        record.setIdentity(record.getIdentity());
+        record.setOrgId(dto.getOrgId());
+        record.setIdentity(dto.getIdentity());
         record.setPassword(MD5Util.md5LowerCase(mobile + record.getPassword()));
-        record.setWorkNumber(record.getWorkNumber());
-        record.setIcon(record.getIcon());
-        record.setEmail(record.getEmail());
+        record.setWorkNumber(dto.getWorkNumber());
+        record.setIcon(dto.getIcon());
+        record.setEmail(dto.getEmail());
         record.setStatus(dto.getStatus());
         record.setModifyTime(new Date());
         if (masterSysUserDao.updateById(record) > 0) {
@@ -249,7 +256,11 @@ public class SysUserMgr {
             wrapper.eq(SysUserRole::getUserId, id);
             if (masterSysUserRoleDao.delete(wrapper) > 0) {
                 List<SysUserRole> userRoleList = new ArrayList<>();
-                for (Long roleId : dto.getRoleIds()) {
+                List<Long> roldIds = Splitter.on(Constant.COMMA).splitToList(dto.getRoleIds())
+                                             .stream()
+                                             .map(i -> Long.valueOf(i))
+                                             .collect(Collectors.toList());
+                for (Long roleId : roldIds) {
                     SysUserRole item = new SysUserRole();
                     item.setRoleId(roleId);
                     item.setUserId(id);
