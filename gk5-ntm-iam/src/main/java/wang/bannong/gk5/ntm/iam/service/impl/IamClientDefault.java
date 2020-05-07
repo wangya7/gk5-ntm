@@ -83,6 +83,16 @@ public class IamClientDefault implements IamClient {
         }
     }
 
+    @Override
+    public NtmResult queryAllOrgSet(SysOrgDto dto) {
+        try {
+            return sysOrgMgr.queryAllOrgSet(dto);
+        } catch (Exception e) {
+            log.error("查询组织集合报错，dto={}，异常信息：", dto, e);
+            throw new RuntimeException(e);
+        }
+    }
+
     /***** 菜单管理 *****/
 
     @Override

@@ -159,20 +159,16 @@ public class SysRoleMgr {
             return NtmResult.fail("角色不存在");
         }
 
-        // 状态和其他的信息不可以同时修改
-        if (dto.getStatus() != null) {
-            record.setStatus(dto.getStatus());
-        } else {
-            LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(SysRole::getPid, record.getPid())
-                   .eq(SysRole::getName, dto.getName());
+        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysRole::getPid, record.getPid())
+               .eq(SysRole::getName, dto.getName());
 
-            SysRole SysRoles = masterSysRoleDao.selectOne(wrapper);
-            if (SysRoles != null && !SysRoles.getId().equals(id)) {
-                return NtmResult.fail("角色名称重复，重新操作");
-            }
-            record.setName(dto.getName());
+        SysRole SysRoles = masterSysRoleDao.selectOne(wrapper);
+        if (SysRoles != null && !SysRoles.getId().equals(id)) {
+            return NtmResult.fail("角色名称重复，重新操作");
         }
+        record.setName(dto.getName());
+        record.setStatus(dto.getStatus());
         record.setModifyTime(new Date());
         masterSysRoleDao.updateById(record);
         return NtmResult.success(record);

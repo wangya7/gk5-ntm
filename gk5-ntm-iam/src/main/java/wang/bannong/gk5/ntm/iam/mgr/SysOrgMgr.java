@@ -23,6 +23,7 @@ import wang.bannong.gk5.ntm.iam.common.dto.SysOrgDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysOrgVo;
 import wang.bannong.gk5.ntm.iam.dao.SysOrgDao;
 import wang.bannong.gk5.util.DateUtils;
+import wang.bannong.gk5.util.domain.Pair;
 
 @Slf4j
 @Component
@@ -111,6 +112,23 @@ public class SysOrgMgr {
             vo.setHasChildren(false);
         }
         return vo;
+    }
+
+    public NtmResult queryAllOrgSet(SysOrgDto dto) throws Exception {
+        LambdaQueryWrapper<SysOrg> wrapper = new LambdaQueryWrapper<>();
+        if (dto.getName() != null) {
+            wrapper.like(SysOrg::getName, dto.getName());
+        }
+
+        List<SysOrg> list = masterSysOrgDao.selectList(wrapper);
+        List<Pair<String, String>> pairs = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (SysOrg sysOrg : list) {
+                pairs.add(Pair.of(String.valueOf(sysOrg.getId()), sysOrg.getName()));
+            }
+
+        }
+        return NtmResult.success(pairs);
     }
 
     @Transactional

@@ -24,6 +24,7 @@ public interface IamClient {
     NtmResult addOrg(SysOrgDto dto);
     NtmResult modifyOrg(SysOrgDto dto);
     NtmResult deleteOrg(SysOrgDto dto);
+    NtmResult queryAllOrgSet(SysOrgDto dto);
 
     /***** 菜单管理 *****/
     NtmResult allMenuList(SysMenuDto dto);
