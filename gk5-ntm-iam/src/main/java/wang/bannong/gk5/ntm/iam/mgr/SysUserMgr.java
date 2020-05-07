@@ -245,7 +245,7 @@ public class SysUserMgr {
         record.setMobile(mobile);
         record.setOrgId(dto.getOrgId());
         record.setIdentity(dto.getIdentity());
-        record.setPassword(MD5Util.md5LowerCase(mobile + record.getPassword()));
+        // record.setPassword(MD5Util.md5LowerCase(mobile + record.getPassword()));
         record.setWorkNumber(dto.getWorkNumber());
         record.setIcon(dto.getIcon());
         record.setEmail(dto.getEmail());
