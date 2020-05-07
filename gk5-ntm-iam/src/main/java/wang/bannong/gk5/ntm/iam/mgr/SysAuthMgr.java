@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -55,15 +56,24 @@ public class SysAuthMgr {
     }
 
     /**
+     * 获取一个管理员对应的菜单权限
+     */
+    public NtmResult queryMyAuthMenu(Long adminId) throws Exception {
+        return authMenu(sysUserMgr.queryRoleIds(adminId));
+    }
+
+    /**
      * 获取一个角色对应的菜单权限
      */
-    public NtmResult queryAuthMenu(SysAuthDto dto) throws Exception {
+    public NtmResult queryAuthMenu(Long roleId) throws Exception {
+        return authMenu(Collections.singletonList(roleId));
+    }
 
-        Set<Long> set = queryRoleMenuByRoleIds(sysUserMgr.queryRoleIds(dto.getUserId()))
+    private  NtmResult authMenu(List<Long> roleIds) throws Exception {
+        Set<Long> set = queryRoleMenuByRoleIds(roleIds)
                 .parallelStream()
                 .map(SysRoleMenu::getMenuId)
                 .collect(Collectors.toSet());
-
 
         List<SysMenu> menus = sysMenuMgr.allMenus();
         List<SysMenuVo> _2 = menus.stream()
@@ -72,9 +82,9 @@ public class SysAuthMgr {
                                   .collect(Collectors.toList());
 
         Map<String, List<SysMenuVo>> _2_3 = menus.stream()
-                                               .filter(i -> i.getType().equals(IamConstant.MENU_BUTTON))
-                                               .map(i -> SysMenuVo.of(i, set.contains(i.getId())))
-                                               .collect(Collectors.groupingBy(SysMenuVo::getPid));
+                                                 .filter(i -> i.getType().equals(IamConstant.MENU_BUTTON))
+                                                 .map(i -> SysMenuVo.of(i, set.contains(i.getId())))
+                                                 .collect(Collectors.groupingBy(SysMenuVo::getPid));
 
         if (MapUtils.isNotEmpty(_2_3)) {
             for (SysMenuVo item : _2) {
@@ -94,8 +104,8 @@ public class SysAuthMgr {
                                   .collect(Collectors.toList());
 
         Map<String, List<SysMenuVo>> _1_2 = _2.stream()
-                                            .sorted(Comparator.comparingInt(SysMenuVo::getSort))
-                                            .collect(Collectors.groupingBy(SysMenuVo::getPid));
+                                              .sorted(Comparator.comparingInt(SysMenuVo::getSort))
+                                              .collect(Collectors.groupingBy(SysMenuVo::getPid));
         for (SysMenuVo item : _1) {
             item.setChildren(_1_2.get(item.getId()));
         }

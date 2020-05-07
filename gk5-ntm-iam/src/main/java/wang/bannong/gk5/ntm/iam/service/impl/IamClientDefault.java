@@ -294,11 +294,21 @@ public class IamClientDefault implements IamClient {
     /***** 权限管理 *****/
 
     @Override
-    public NtmResult queryAuth(SysAuthDto dto) {
+    public NtmResult queryMyAuth(long adminId) {
         try {
-            return sysAuthMgr.queryAuthMenu(dto);
+            return sysAuthMgr.queryMyAuthMenu(adminId);
         } catch (Exception e) {
-            log.error("根据角色查询菜单权限报错，dto={}，异常信息：", dto, e);
+            log.error("根据角色查询菜单权限报错，adminId={}，异常信息：", adminId, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public NtmResult queryAuth(Long roleId) {
+        try {
+            return sysAuthMgr.queryAuthMenu(roleId);
+        } catch (Exception e) {
+            log.error("根据角色查询菜单权限报错，roleId={}，异常信息：", roleId, e);
             throw new RuntimeException(e);
         }
     }

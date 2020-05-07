@@ -55,6 +55,7 @@ public interface IamClient {
     NtmResult forgetPasswd(SysUserDto dto);
 
     /***** 权限管理 *****/
-    NtmResult queryAuth(SysAuthDto dto);
+    NtmResult queryMyAuth(long adminId);
+    NtmResult queryAuth(Long roleId);
     NtmResult modifyAuth(SysAuthDto dto);
 }
