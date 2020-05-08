@@ -3,7 +3,6 @@ package wang.bannong.gk5.ntm.iam.common.dto;
 import java.io.Serializable;
 
 import lombok.Data;
-import lombok.ToString;
 
 @Data
 public class SysBaseDto implements Serializable {
@@ -11,6 +10,6 @@ public class SysBaseDto implements Serializable {
 
     private Long userId; // 正在登陆的管理员
     private Long id;     // 业务主键
-    private int  pageNum;
-    private int  pageSize;
+    private int  pageNum  = 1;
+    private int  pageSize = 10;
 }

@@ -34,7 +34,6 @@ import wang.bannong.gk5.ntm.iam.common.vo.SysUserVo;
 import wang.bannong.gk5.ntm.iam.dao.SysUserDao;
 import wang.bannong.gk5.ntm.iam.dao.SysUserRoleDao;
 import wang.bannong.gk5.util.Constant;
-import wang.bannong.gk5.util.DateUtils;
 import wang.bannong.gk5.util.MD5Util;
 import wang.bannong.gk5.util.SnowFlakeGenerator;
 import wang.bannong.gk5.util.domain.Pair;
@@ -120,6 +119,7 @@ public class SysUserMgr {
     }
 
     public NtmResult querySysUser(SysUserDto dto) throws Exception {
+        log.info("管理员列表查询【{}】", dto);
         int pageNum = dto.getPageNum(), pageSize = dto.getPageSize();
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         if (dto.getName() != null)
