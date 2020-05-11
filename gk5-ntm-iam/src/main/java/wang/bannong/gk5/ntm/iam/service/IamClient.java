@@ -1,6 +1,9 @@
 package wang.bannong.gk5.ntm.iam.service;
 
+import java.util.List;
+
 import wang.bannong.gk5.ntm.common.model.NtmResult;
+import wang.bannong.gk5.ntm.iam.common.domain.SysUser;
 import wang.bannong.gk5.ntm.iam.common.dto.SysAuthDto;
 import wang.bannong.gk5.ntm.iam.common.dto.SysMenuDto;
 import wang.bannong.gk5.ntm.iam.common.dto.SysOrgDto;
@@ -54,6 +57,8 @@ public interface IamClient {
     NtmResult deleteUser(SysUserDto dto);
     NtmResult modifyPasswd(SysUserDto dto);
     NtmResult forgetPasswd(SysUserDto dto);
+
+    List<SysUser> queryAdminByRoleName(String roleName);
 
     /***** 权限管理 *****/
     NtmResult queryMyAuth(long adminId);

@@ -3,8 +3,11 @@ package wang.bannong.gk5.ntm.iam.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
+import wang.bannong.gk5.ntm.iam.common.domain.SysUser;
 import wang.bannong.gk5.ntm.iam.common.dto.SysAuthDto;
 import wang.bannong.gk5.ntm.iam.common.dto.SysMenuDto;
 import wang.bannong.gk5.ntm.iam.common.dto.SysOrgDto;
@@ -307,6 +310,16 @@ public class IamClientDefault implements IamClient {
             return sysUserMgr.forgetPasswd(dto);
         } catch (Exception e) {
             log.error("忘记管理员报错，dto={}，异常信息：", dto, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<SysUser> queryAdminByRoleName(String roleName) {
+        try {
+            return sysUserMgr.queryByRoleName(roleName);
+        } catch (Exception e) {
+            log.error("根据角色NAME查询管理员，roleName={}，异常信息：", roleName, e);
             throw new RuntimeException(e);
         }
     }
