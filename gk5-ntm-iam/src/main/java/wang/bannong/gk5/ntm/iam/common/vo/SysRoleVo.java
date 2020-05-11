@@ -12,7 +12,6 @@ public class SysRoleVo implements Serializable {
     private String          id;
     private String          pid;
     private String          name;
-    private Byte            status;
     private String          createTime;
     private Boolean         hasChildren;
     private List<SysRoleVo> children;

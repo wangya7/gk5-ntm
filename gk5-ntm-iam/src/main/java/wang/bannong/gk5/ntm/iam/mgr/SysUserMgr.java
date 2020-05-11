@@ -86,6 +86,30 @@ public class SysUserMgr {
         return Collections.EMPTY_MAP;
     }
 
+    public List<SysUserRole> querySysUserRoleByRoleId(Long roleId) throws Exception {
+        LambdaQueryWrapper<SysUserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUserRole::getRoleId, roleId);
+        return slaveSysUserRoleDao.selectList(wrapper);
+    }
+
+    public List<SysUserRole> querySysUserRoleByAdminId(Long adminId) throws Exception {
+        LambdaQueryWrapper<SysUserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUserRole::getUserId, adminId);
+        return slaveSysUserRoleDao.selectList(wrapper);
+    }
+
+    public List<SysUser> queryByRoleName(String roleName) throws Exception {
+        SysRole sysRole = sysRoleMgr.queryByName(roleName);
+        if (null == sysRole) {
+            return Collections.EMPTY_LIST;
+        }
+        List<SysUserRole> sysUserRoles = querySysUserRoleByRoleId(sysRole.getId());
+        if (CollectionUtils.isEmpty(sysUserRoles)) {
+            return Collections.EMPTY_LIST;
+        }
+        return queryByIds(sysUserRoles.stream().map(SysUserRole::getUserId).collect(Collectors.toList()));
+    }
+
 
     /**
      * 组织下时候存在有效员工

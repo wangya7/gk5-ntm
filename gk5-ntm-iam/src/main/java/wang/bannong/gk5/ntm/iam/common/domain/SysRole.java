@@ -12,7 +12,6 @@ public class SysRole implements Serializable {
     private Long   id;
     private Long   pid;
     private String name;
-    private Byte   status;
     private Date   createTime;
     private Date   modifyTime;
 

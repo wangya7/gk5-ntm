@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
-import wang.bannong.gk5.ntm.iam.common.constant.IamConstant;
 import wang.bannong.gk5.ntm.iam.common.domain.SysRole;
+import wang.bannong.gk5.ntm.iam.common.domain.SysUserRole;
 import wang.bannong.gk5.ntm.iam.common.dto.SysRoleDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysRoleVo;
 import wang.bannong.gk5.ntm.iam.dao.SysRoleDao;
@@ -36,6 +36,12 @@ public class SysRoleMgr {
     @Autowired
     private SysUserMgr sysUserMgr;
 
+    public SysRole queryByName(String name) throws Exception {
+        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysRole::getName, name);
+        return slaveSysRoleDao.selectOne(wrapper);
+    }
+
     public SysRole queryById(Long id) throws Exception {
         return slaveSysRoleDao.selectById(id);
     }
@@ -51,6 +57,7 @@ public class SysRoleMgr {
         }
         return Collections.EMPTY_MAP;
     }
+
 
     public Map<Long, String> queryNameMapByIds(Set<Long> ids) throws Exception {
         List<SysRole> SysRoles = queryByIds(ids);
@@ -92,7 +99,6 @@ public class SysRoleMgr {
         vo.setId(String.valueOf(record.getId()));
         vo.setPid(String.valueOf(record.getPid()));
         vo.setName(record.getName());
-        vo.setStatus(record.getStatus());
         vo.setCreateTime(DateUtils.format(record.getCreateTime()));
 
         List<SysRole> children = listMap.get(record.getId());
@@ -112,7 +118,6 @@ public class SysRoleMgr {
 
     public NtmResult querySysRoleSet(SysRoleDto dto) throws Exception {
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRole::getStatus, IamConstant.EFF);
         if (dto.getName() != null) {
             wrapper.like(SysRole::getName, dto.getName());
         }
@@ -129,18 +134,13 @@ public class SysRoleMgr {
 
     @Transactional
     public NtmResult addSysRole(SysRoleDto dto) throws Exception {
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRole::getPid, dto.getPid())
-               .eq(SysRole::getName, dto.getName());
-
-        SysRole record = masterSysRoleDao.selectOne(wrapper);
+        SysRole record = queryByName(dto.getName());
         if (record != null) {
             return NtmResult.fail("角色名称重复，重新操作");
         }
         record = new SysRole();
         record.setPid(dto.getPid());
         record.setName(dto.getName());
-        record.setStatus(IamConstant.EFF);
         record.setCreateTime(new Date());
         record.setModifyTime(record.getCreateTime());
         masterSysRoleDao.insert(record);
@@ -159,16 +159,11 @@ public class SysRoleMgr {
             return NtmResult.fail("角色不存在");
         }
 
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRole::getPid, record.getPid())
-               .eq(SysRole::getName, dto.getName());
-
-        SysRole SysRoles = masterSysRoleDao.selectOne(wrapper);
+        SysRole SysRoles = queryByName(dto.getName());
         if (SysRoles != null && !SysRoles.getId().equals(id)) {
             return NtmResult.fail("角色名称重复，重新操作");
         }
         record.setName(dto.getName());
-        record.setStatus(dto.getStatus());
         record.setModifyTime(new Date());
         masterSysRoleDao.updateById(record);
         return NtmResult.success(record);
@@ -183,17 +178,18 @@ public class SysRoleMgr {
             return NtmResult.fail("角色不存在");
         }
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRole::getPid, id)
-               .eq(SysRole::getStatus, IamConstant.EFF);
+        wrapper.eq(SysRole::getPid, id);
 
         List<SysRole> SysRoles = masterSysRoleDao.selectList(wrapper);
         if (CollectionUtils.isNotEmpty(SysRoles)) {
             return NtmResult.fail("角色还存在下属，先处理下级角色");
         }
 
-        record.setStatus(IamConstant.EXP);
-        record.setModifyTime(new Date());
-        masterSysRoleDao.updateById(record);
+        List<SysUserRole> sysUserRoles = sysUserMgr.querySysUserRoleByRoleId(id);
+        if (CollectionUtils.isNotEmpty(sysUserRoles)) {
+            return NtmResult.fail("角色还存在管理员，请先处理");
+        }
+        masterSysRoleDao.deleteById(id);
         return NtmResult.success(record);
     }
 

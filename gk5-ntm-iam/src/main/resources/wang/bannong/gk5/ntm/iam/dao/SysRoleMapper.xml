@@ -5,12 +5,11 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="pid" jdbcType="BIGINT" property="pid" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, pid, name, status, create_time, modify_time
+    id, pid, name, create_time, modify_time
   </sql>
   
   <select id="allRole" resultMap="BaseResultMap">

@@ -24,7 +24,6 @@ import wang.bannong.gk5.ntm.iam.common.domain.SysRoleMenu;
 import wang.bannong.gk5.ntm.iam.common.dto.SysAuthDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysMenuVo;
 import wang.bannong.gk5.ntm.iam.dao.SysRoleMenuDao;
-import wang.bannong.gk5.ntm.iam.dao.SysRoleTopicDao;
 
 @Slf4j
 @Component
