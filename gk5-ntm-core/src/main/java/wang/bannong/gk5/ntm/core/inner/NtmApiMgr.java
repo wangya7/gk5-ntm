@@ -53,11 +53,11 @@ public class NtmApiMgr {
     private NtmApiParamDao slaveNtmApiParamDao;
 
     public NtmApi queryById(Long id) {
-        return masterNtmApiDao.selectById(id);
+        return NtmApiCache.queryApi(id);
     }
 
     public List<NtmApi> queryByIds(List<Long> ids) {
-        return masterNtmApiDao.selectBatchIds(ids);
+        return NtmApiCache.queryApis(ids);
     }
 
     public NtmApi queryByUnique(String unique) {
@@ -67,24 +67,11 @@ public class NtmApiMgr {
     }
 
     public NtmApi queryByUniqueAndVersionAppid(String unique, int version, String appid) {
-        QueryWrapper<NtmApi> wrapper = new QueryWrapper<>();
-        wrapper.lambda()
-               .eq(NtmApi::getUnique, unique)
-               .eq(NtmApi::getVersion, version)
-               .eq(NtmApi::getAppid, appid);
-        return masterNtmApiDao.selectOne(wrapper);
+        return NtmApiCache.queryApi(unique, version, appid);
     }
 
     public List<NtmApiParam> queryParams(Long apiId) {
-        QueryWrapper<NtmApiParam> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(NtmApiParam::getApiId, apiId);
-        return masterNtmApiParamDao.selectList(wrapper);
-    }
-
-    public List<NtmApiParam> queryParamsByApiId(Long apiId) {
-        QueryWrapper<NtmApiParam> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(NtmApiParam::getApiId, apiId);
-        return masterNtmApiParamDao.selectList(wrapper);
+        return NtmApiCache.queryApiParams(apiId);
     }
 
     public NtmApiParam queryParamByAppidAndName(Long apiId, String name) {
@@ -96,11 +83,11 @@ public class NtmApiMgr {
     }
 
     public NtmApiParam queryParamById(Long id) {
-        return masterNtmApiParamDao.selectById(id);
+        return NtmApiCache.queryApiParam(id);
     }
 
     public List<NtmApiParam> queryParamByIds(List<Long> ids) {
-        return masterNtmApiParamDao.selectBatchIds(ids);
+        return NtmApiCache.queryApiParams(ids);
     }
 
     //************************ 接口
