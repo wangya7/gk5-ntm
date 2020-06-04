@@ -3,7 +3,8 @@
 
 ### 项目模块
 * gk5-ntm-common: 基础包
-* gk5-ntm-core: 网关的核心包
+* gk5-ntm-rpc: 网关RPC版本
+* gk5-ntm-standalone: 网关单机版本
 * gk5-ntm-iam: 权限控制
 * gk5-ntm-sample: 案例
 * gk5-ntm-doc: 文档
