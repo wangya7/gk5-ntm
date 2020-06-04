@@ -9,11 +9,11 @@ public abstract class NtmConfigSetting {
     public static String  TS_THRESHOLD_CONFIG      = "TS_THRESHOLD";
     public static String  CHECK_SIGN_CONFIG        = "CHECK_SIGN";
 
-
     /**
      * RSA加密
      */
-    public static boolean     sign = true;
+    public static boolean     sign = false;
+
     public static String publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsLp2NLUOqRdWItvH3zWJsdWvveUvWj/B\n" +
                     "+XRzRuzDTvsaMgHAfE7zpjEqFj4/BVw4LThOseLXwsxt4RHxEpykL/OMpMUz8MJmN3gKVID43tN7\n" +
                     "5H0b6IL46ymMNwOcPt9EfEGdnUaTJEwxG4VpKIGWxDOUnEybS7QuUztJlNMByxEYR69dLUSSOCM+\n" +

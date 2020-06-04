@@ -26,7 +26,7 @@
     </dependency>
     <dependency>
       <groupId>wang.bannong</groupId>
-      <artifactId>gk5-ntm-core</artifactId>
+      <artifactId>gk5-ntm-standalone</artifactId>
       <version>1.0.0-beta</version>
     </dependency>
   </dependencies>

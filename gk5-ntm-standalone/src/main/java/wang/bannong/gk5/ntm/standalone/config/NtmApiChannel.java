@@ -1,11 +1,7 @@
 package wang.bannong.gk5.ntm.standalone.config;
 
-import lombok.Getter;
-import lombok.ToString;
-
-@Getter
-@ToString
 public enum NtmApiChannel {
+    base,
     admin,
     app,
     miniapp,
@@ -20,7 +16,9 @@ public enum NtmApiChannel {
         return null;
     }
 
-    public static void main (String[] args) {
-        System.out.println(NtmApiChannel.of("admin"));
+    @Override
+    public String toString() {
+        return "NtmApiChannel-" + this.name();
     }
+
 }

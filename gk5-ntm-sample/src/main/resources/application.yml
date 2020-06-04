@@ -1,13 +1,14 @@
 server:
   port: 8085
+
 logging:
   config: classpath:log4j2.yml
+
 spring:
   application:
     name: gk5-ntm-sample
-  data:
-    mongodb:
-      uri: mongodb://192.168.31.37:27017/carloan
+  profiles:
+    include: api
 
 cache:
   redis:
@@ -20,27 +21,3 @@ cache:
     poolMaxIdle: 150
     poolMinIdle: 100
     poolTestOnBorrow: true
-
-datasource:
-  mappersPath: wang.bannong.gk5.ntm.core.dao
-  mapperLocations: classpath*:/wang/bannong/gk5/ntm/core/dao/*.xml
-  primary: master
-  dbs:
-    - key: master
-      host: 127.0.0.1
-      port: 3306
-      db: ntm
-      username: root
-      password: '@iam3307'
-      minIdle: 10
-      maxIdle: 10
-      connectionTimeout: 30000
-    - key: slave
-      host: 127.0.0.1
-      port: 3306
-      db: ntm
-      username: root
-      password: '@iam3307'
-      minIdle: 10
-      maxIdle: 10
-      connectionTimeout: 30000

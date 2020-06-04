@@ -54,7 +54,7 @@ public class ApiYmlUtil {
                         Objects.requireNonNull(apiKey, String.format(ERROR_MSG, apiKey));
                         Objects.requireNonNull(apiValue, String.format(ERROR_MSG, apiKey));
 
-                        String[] arr1 = apiValue.split(Constant.UNDERLINE);
+                        String[] arr1 = apiKey.split(Constant.UNDERLINE);
                         if (arr1.length != 2)
                             throw new RuntimeException(String.format(ERROR_MSG, apiKey));
 

@@ -13,7 +13,7 @@ import lombok.Data;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "ntm-apis")
+@ConfigurationProperties(prefix = "ntm")
 public class ApiYmlConfig {
     private Map<String, Map<String, String>> apiMap = new HashMap<>();
 }

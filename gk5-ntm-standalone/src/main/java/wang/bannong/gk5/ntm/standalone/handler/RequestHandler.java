@@ -129,9 +129,8 @@ public class RequestHandler {
             }
         }
 
-        boolean checkSign = NtmConfigSetting.sign;
         // 5. 签名校验
-        if (checkSign) {
+        if (NtmConfigSetting.sign) {
             String signArgs = String.format(ApiConfig.SIGN_FORMAT, _api, _appid, _channel, _data, _ia, _ts, _ttid, _v);
             log.info(NtmConstant.LOG_IN + "sign 加密的text={}", signArgs);
             String text = RSAUtils.decrypt(RSAUtils.base64Decode(_sign), RSAUtils.getPrivateKey(NtmConfigSetting.privateKey));
@@ -151,6 +150,7 @@ public class RequestHandler {
         log.info(NtmConstant.LOG_IN + "request bo={}", ntmRequest);
         return NtmResult.success(ntmRequest);
     }
+
 
     private static String getIp(HttpServletRequest servletRequest) {
         String ip = null;
