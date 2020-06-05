@@ -55,7 +55,7 @@ public class BaseNtmCtrl {
                                           .api(api)
                                           .request(request)
                                           .builder();
-        return response;
+        return log(response);
     }
 
     public NtmResult innerApi(NtmInnerRequest request, NtmApi apiInfo) {
