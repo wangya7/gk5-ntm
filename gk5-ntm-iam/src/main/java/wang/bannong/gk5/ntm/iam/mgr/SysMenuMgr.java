@@ -164,6 +164,15 @@ public class SysMenuMgr {
             return NtmResult.fail("菜单名称重复，重新操作");
         }
 
+        String directory = dto.getDirectory();
+        wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysMenu::getPid, pid)
+               .eq(SysMenu::getDirectory, directory);
+        record = masterSysMenuDao.selectOne(wrapper);
+        if (record != null) {
+            return NtmResult.fail("菜单目录重复，重新操作");
+        }
+
         Byte type = dto.getType();
         if (pid.compareTo(0L) > 0) {
             SysMenu sysMenu = queryById(pid);
@@ -183,6 +192,7 @@ public class SysMenuMgr {
         record = new SysMenu();
         record.setPid(dto.getPid());
         record.setName(dto.getName());
+        record.setDirectory(directory);
         record.setType(type);
         record.setSort(dto.getSort());
         record.setCreateTime(new Date());
@@ -212,8 +222,18 @@ public class SysMenuMgr {
             return NtmResult.fail("菜单名称重复，重新操作");
         }
 
+        String directory = dto.getDirectory();
+        wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysMenu::getPid, record.getPid())
+               .eq(SysMenu::getDirectory, directory);
+        record = masterSysMenuDao.selectOne(wrapper);
+        if (record != null) {
+            return NtmResult.fail("菜单目录重复，重新操作");
+        }
+
         record.setSort(dto.getSort());
         record.setName(dto.getName());
+        record.setDirectory(directory);
         if (masterSysMenuDao.updateById(record) > 0) {
             return NtmResult.success(record);
         }

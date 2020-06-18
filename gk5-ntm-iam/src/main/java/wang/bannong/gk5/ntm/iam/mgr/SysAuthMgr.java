@@ -90,6 +90,7 @@ public class SysAuthMgr {
             }
         }
 
+        // 一级菜单永远展示
         List<SysMenuVo> _1 = menus.stream()
                                   .filter(i -> i.getType().equals(IamConstant.MENU_FIRST))
                                   .map(i -> SysMenuVo.of(i))
@@ -111,6 +112,7 @@ public class SysAuthMgr {
         LambdaQueryWrapper<SysRoleMenu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysRoleMenu::getRoleId, dto.getRoldId());
         masterSysRoleMenuDao.delete(wrapper);
+        // 这里面要求 必须是二级、三级菜单按钮
         List<Long> menuIds = dto.getMenuIds();
         if (CollectionUtils.isNotEmpty(menuIds)) {
             List<SysRoleMenu> list = new ArrayList<>();

@@ -12,6 +12,7 @@ public class SysMenu implements Serializable {
     private Long    id;
     private Long    pid;
     private String  name;
+    private String  directory;
     private Byte    type;      // 1-一级菜单 2-二级菜单 3-菜单中的按钮
     private Integer sort;
     private Date    createTime;

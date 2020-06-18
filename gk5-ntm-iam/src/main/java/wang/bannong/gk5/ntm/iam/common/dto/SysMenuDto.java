@@ -10,6 +10,7 @@ public class SysMenuDto extends SysBaseDto {
 
     private Long    pid;
     private String  name;
+    private String  directory;
     private Byte    type;
     private Byte    visible;
     private Byte    status;

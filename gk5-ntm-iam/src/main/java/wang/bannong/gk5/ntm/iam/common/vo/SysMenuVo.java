@@ -13,6 +13,7 @@ public class SysMenuVo implements Serializable {
     private String          id;
     private String          pid;
     private String          name;
+    private String          directory;
     private Byte            type;      // 1-一级菜单 2-二级菜单 3-菜单中的按钮
     private Integer         sort;
     private Boolean         visible = false;
@@ -27,6 +28,7 @@ public class SysMenuVo implements Serializable {
         vo.setName(menu.getName());
         vo.setType(menu.getType());
         vo.setSort(menu.getSort());
+        vo.setDirectory(menu.getDirectory());
         return vo;
     }
 
@@ -38,6 +40,7 @@ public class SysMenuVo implements Serializable {
         vo.setType(menu.getType());
         vo.setSort(menu.getSort());
         vo.setVisible(visible);
+        vo.setDirectory(menu.getDirectory());
         return vo;
     }
 }

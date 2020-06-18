@@ -5,12 +5,13 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="pid" jdbcType="BIGINT" property="pid" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="directory" jdbcType="VARCHAR" property="directory" />
     <result column="type" jdbcType="TINYINT" property="type" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, pid, name, type, sort, create_time
+    id, pid, name, directory, type, sort, create_time
   </sql>
 
   <select id="allMenus" resultType="wang.bannong.gk5.ntm.iam.common.domain.SysMenu">
