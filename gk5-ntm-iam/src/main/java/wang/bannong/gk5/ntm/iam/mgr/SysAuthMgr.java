@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,13 +32,13 @@ import wang.bannong.gk5.ntm.iam.dao.SysRoleMenuDao;
 public class SysAuthMgr {
 
     @Autowired
-    private SysUserMgr      sysUserMgr;
+    private SysUserMgr     sysUserMgr;
     @Autowired
-    private SysMenuMgr      sysMenuMgr;
+    private SysMenuMgr     sysMenuMgr;
     @Autowired
-    private SysRoleMenuDao  masterSysRoleMenuDao;
+    private SysRoleMenuDao masterSysRoleMenuDao;
     @Autowired
-    private SysRoleMenuDao  slaveSysRoleMenuDao;
+    private SysRoleMenuDao slaveSysRoleMenuDao;
 
     public List<SysRoleMenu> queryRoleMenuByRoleId(Long roleId) throws Exception {
         return slaveSysRoleMenuDao.selectByRoleId(roleId);
@@ -50,7 +52,7 @@ public class SysAuthMgr {
      * 获取一个管理员对应的菜单权限
      */
     public NtmResult queryMyAuthMenu(Long adminId) throws Exception {
-        List<SysMenuVo> sysMenuVos = authMenu(sysUserMgr.queryRoleIds(adminId));
+        List<SysMenuVo> sysMenuVos = authMenu(sysUserMgr.queryRoleIds(adminId), true);
         return NtmResult.success(sysMenuVos);
     }
 
@@ -58,11 +60,11 @@ public class SysAuthMgr {
      * 获取一个角色对应的菜单权限
      */
     public NtmResult queryAuthMenu(Long roleId) throws Exception {
-        List<SysMenuVo> sysMenuVos = authMenu(Collections.singletonList(roleId));
+        List<SysMenuVo> sysMenuVos = authMenu(Collections.singletonList(roleId), false);
         return NtmResult.success(sysMenuVos);
     }
 
-    private  List<SysMenuVo> authMenu(List<Long> roleIds) throws Exception {
+    private List<SysMenuVo> authMenu(List<Long> roleIds, boolean filterFirstMenu) throws Exception {
         Set<Long> set = queryRoleMenuByRoleIds(roleIds)
                 .parallelStream()
                 .map(SysRoleMenu::getMenuId)
@@ -100,8 +102,23 @@ public class SysAuthMgr {
         Map<String, List<SysMenuVo>> _1_2 = _2.stream()
                                               .sorted(Comparator.comparingInt(SysMenuVo::getSort))
                                               .collect(Collectors.groupingBy(SysMenuVo::getPid));
-        for (SysMenuVo item : _1) {
-            item.setChildren(_1_2.get(item.getId()));
+        // 是否需要过滤为空的1级菜单
+        if (filterFirstMenu) {
+            Iterator<SysMenuVo> iterable = _1.iterator();
+            while (iterable.hasNext()) {
+                SysMenuVo item = iterable.next();
+                List<SysMenuVo> tmp = _1_2.get(item.getId());
+                if (CollectionUtils.isNotEmpty(tmp)) {
+                    item.setChildren(tmp);
+                    item.setHasChildren(true);
+                } else {
+                    _1.remove(item);
+                }
+            }
+        } else {
+            for (SysMenuVo item : _1) {
+                item.setChildren(_1_2.get(item.getId()));
+            }
         }
 
         return _1;
@@ -112,8 +129,13 @@ public class SysAuthMgr {
         LambdaQueryWrapper<SysRoleMenu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysRoleMenu::getRoleId, dto.getRoldId());
         masterSysRoleMenuDao.delete(wrapper);
+
         // 这里面要求 必须是二级、三级菜单按钮
-        List<Long> menuIds = dto.getMenuIds();
+        List<Long> menuIds = sysMenuMgr.queryByIds(new HashSet<>(dto.getMenuIds())).stream()
+                                       .filter(i -> i.getType() > 1)
+                                       .map(SysMenu::getId)
+                                       .collect(Collectors.toList());
+
         if (CollectionUtils.isNotEmpty(menuIds)) {
             List<SysRoleMenu> list = new ArrayList<>();
             for (Long menuId : menuIds) {

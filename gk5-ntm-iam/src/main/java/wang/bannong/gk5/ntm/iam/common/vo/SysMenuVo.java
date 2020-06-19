@@ -2,6 +2,7 @@ package wang.bannong.gk5.ntm.iam.common.vo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.Data;
 import wang.bannong.gk5.ntm.iam.common.domain.SysMenu;
@@ -42,5 +43,21 @@ public class SysMenuVo implements Serializable {
         vo.setVisible(visible);
         vo.setDirectory(menu.getDirectory());
         return vo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        SysMenuVo sysMenuVo = (SysMenuVo) o;
+        return Objects.equals(id, sysMenuVo.id) &&
+                Objects.equals(pid, sysMenuVo.pid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pid);
     }
 }
