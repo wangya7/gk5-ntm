@@ -266,6 +266,6 @@ public class SysMenuMgr {
                 return NtmResult.success(record);
             }
         }
-        return NtmResult.fail(NtmConstant.EXP_MSG);
+        return NtmResult.SUCCESS;
     }
 }

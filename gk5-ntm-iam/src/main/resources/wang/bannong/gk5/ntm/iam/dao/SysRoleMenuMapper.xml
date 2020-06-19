@@ -13,7 +13,7 @@
   </sql>
 
   <insert id="batchInsert" parameterType="java.util.List">
-    insert into sys_role_menu values(role_id, menu_id)
+    insert into sys_role_menu(role_id, menu_id)  values
     <foreach collection="list" item="bo" separator=",">(#{bo.roleId}, #{bo.menuId})</foreach>
   </insert>
 
