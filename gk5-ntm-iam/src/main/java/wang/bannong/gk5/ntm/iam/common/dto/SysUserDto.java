@@ -21,6 +21,7 @@ public class SysUserDto extends SysBaseDto {
     private String email;
     private String name;
     private Byte   status;
+    private Byte   type;
     private Date   lastLoginTime;
     private Long   creatorId;
     private String roleIds;

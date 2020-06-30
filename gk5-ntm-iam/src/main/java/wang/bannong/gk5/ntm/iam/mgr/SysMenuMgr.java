@@ -170,22 +170,22 @@ public class SysMenuMgr {
                .eq(SysMenu::getDirectory, directory);
         record = masterSysMenuDao.selectOne(wrapper);
         if (record != null) {
-            return NtmResult.fail("菜单目录重复，重新操作");
+            return NtmResult.fail("菜单路径重复，重新操作");
         }
 
         Byte type = dto.getType();
         if (pid.compareTo(0L) > 0) {
             SysMenu sysMenu = queryById(pid);
             if (sysMenu.getType().equals(IamConstant.MENU_FIRST) && !type.equals(IamConstant.MENU_SECOND)) {
-                return NtmResult.fail("一级菜单只能添加二级菜单");
+                return NtmResult.fail("目录只能添加菜单");
             }
 
             if (sysMenu.getType().equals(IamConstant.MENU_SECOND) && !type.equals(IamConstant.MENU_BUTTON)) {
-                return NtmResult.fail("二级菜单只能添加按钮");
+                return NtmResult.fail("菜单只能按钮");
             }
 
             if (sysMenu.getType().equals(IamConstant.MENU_BUTTON)) {
-                return NtmResult.fail("菜单下禁止添加下级");
+                return NtmResult.fail("按钮禁止添加下级");
             }
         }
 
@@ -217,8 +217,8 @@ public class SysMenuMgr {
         wrapper.eq(SysMenu::getPid, record.getPid())
                .eq(SysMenu::getName, dto.getName());
 
-        SysMenu SysMenus = masterSysMenuDao.selectOne(wrapper);
-        if (SysMenus != null && !SysMenus.getId().equals(id)) {
+        SysMenu sysMenus1 = masterSysMenuDao.selectOne(wrapper);
+        if (sysMenus1 != null && !sysMenus1.getId().equals(id)) {
             return NtmResult.fail("菜单名称重复，重新操作");
         }
 
@@ -226,9 +226,9 @@ public class SysMenuMgr {
         wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysMenu::getPid, record.getPid())
                .eq(SysMenu::getDirectory, directory);
-        record = masterSysMenuDao.selectOne(wrapper);
-        if (record != null) {
-            return NtmResult.fail("菜单目录重复，重新操作");
+        SysMenu sysMenus2 = masterSysMenuDao.selectOne(wrapper);
+        if (sysMenus2 != null && !sysMenus2.getId().equals(id)) {
+            return NtmResult.fail("菜单路径重复，重新操作");
         }
 
         record.setSort(dto.getSort());

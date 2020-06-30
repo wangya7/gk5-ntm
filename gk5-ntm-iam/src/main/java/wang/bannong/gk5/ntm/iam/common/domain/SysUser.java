@@ -19,6 +19,7 @@ public class SysUser implements Serializable {
     private String email;
     private String name;
     private Byte   status;
+    private Byte   type;
     private Date   lastLoginTime;
     private Long   creatorId;
     private Date   createTime;

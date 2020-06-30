@@ -228,6 +228,7 @@ public class SysUserMgr {
         record.setEmail(dto.getEmail());
 
         record.setStatus(IamConstant.EFF);
+        record.setType(dto.getType());
         record.setLastLoginTime(null);
         record.setCreatorId(dto.getCreatorId());
         Date now = new Date();
@@ -274,6 +275,8 @@ public class SysUserMgr {
         record.setIcon(dto.getIcon());
         record.setEmail(dto.getEmail());
         record.setStatus(dto.getStatus());
+        record.setType(dto.getType());
+
         record.setModifyTime(new Date());
         if (masterSysUserDao.updateById(record) > 0) {
             LambdaQueryWrapper<SysUserRole> wrapper = new LambdaQueryWrapper<>();

@@ -12,6 +12,7 @@
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="type" jdbcType="TINYINT" property="type" />
     <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
     <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -19,6 +20,6 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, org_id, mobile, identity, password, work_number, icon, email, name,
-    status, last_login_time, creator_id, create_time, modify_time
+    status, type, last_login_time, creator_id, create_time, modify_time
   </sql>
 </mapper>
