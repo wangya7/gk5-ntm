@@ -150,6 +150,7 @@ public class SysUserMgr {
             wrapper.like(SysUser::getName, dto.getName());
         if (dto.getMobile() != null)
             wrapper.like(SysUser::getMobile, dto.getMobile());
+        wrapper.orderByDesc(SysUser::getModifyTime);
 
         Page<SysUser> page = new Page<>(pageNum, pageSize);
         slaveSysUserDao.selectPage(page, wrapper);
@@ -310,7 +311,11 @@ public class SysUserMgr {
             return NtmResult.fail("管理员不存在");
         }
         if (masterSysUserDao.deleteById(id) > 0) {
-            return NtmResult.success(record);
+            LambdaQueryWrapper<SysUserRole> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(SysUserRole::getUserId, id);
+            if (masterSysUserRoleDao.delete(wrapper) > 0) {
+                return NtmResult.success(record);
+            }
         }
         return NtmResult.fail(NtmConstant.EXP_MSG);
     }
