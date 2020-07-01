@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,20 +55,58 @@ public class SysAuthMgr {
         if (CollectionUtils.isEmpty(roleIds)) {
             return NtmResult.fail("管理员信息错误：没有绑定系统角色");
         }
-        List<SysMenuVo> sysMenuVos = authMenu(roleIds, true);
-        return NtmResult.success(sysMenuVos);
+        Set<Long> set = queryRoleMenuByRoleIds(roleIds)
+                .parallelStream()
+                .map(SysRoleMenu::getMenuId)
+                .collect(Collectors.toSet());
+        
+        List<SysMenu> menus = sysMenuMgr.allMenus();
+        List<SysMenuVo> _2 = menus.stream()
+                                  .filter(i -> i.getType().equals(IamConstant.MENU_SECOND) && set.contains(i.getId()))
+                                  .map(i -> SysMenuVo.of(i, true))
+                                  .collect(Collectors.toList());
+
+        Map<String, List<SysMenuVo>> _2_3 = menus.stream()
+                                                 .filter(i -> i.getType().equals(IamConstant.MENU_BUTTON) && set.contains(i.getId()))
+                                                 .map(i -> SysMenuVo.of(i, true))
+                                                 .collect(Collectors.groupingBy(SysMenuVo::getPid));
+        if (MapUtils.isNotEmpty(_2_3)) {
+            for (SysMenuVo item : _2) {
+                List<SysMenuVo> tmp = _2_3.get(item.getId());
+                if (CollectionUtils.isNotEmpty(tmp)) {
+                    item.setChildren(tmp.stream()
+                                        .sorted(Comparator.comparingInt(SysMenuVo::getSort))
+                                        .collect(Collectors.toList()));
+                    item.setHasChildren(true);
+                }
+            }
+        }
+        // 收集所有的一级目录
+        Set<Long> _2Pid = _2.stream().map(i -> Long.valueOf(i.getPid())).collect(Collectors.toSet());
+        log.info("_2Pid={}", _2Pid);
+
+        List<SysMenuVo> _1 = menus.stream()
+                                  .filter(i -> i.getType().equals(IamConstant.MENU_FIRST) && _2Pid.contains(i.getId()))
+                                  .map(i -> SysMenuVo.of(i))
+                                  .sorted(Comparator.comparingInt(SysMenuVo::getSort))
+                                  .collect(Collectors.toList());
+
+        Map<String, List<SysMenuVo>> _1_2 = _2.stream()
+                                              .sorted(Comparator.comparingInt(SysMenuVo::getSort))
+                                              .collect(Collectors.groupingBy(SysMenuVo::getPid));
+        for (SysMenuVo item : _1) {
+            item.setChildren(_1_2.get(item.getId()));
+            item.setHasChildren(true);
+        }
+
+        return NtmResult.success(_1);
     }
 
     /**
      * 获取一个角色对应的菜单权限
      */
     public NtmResult queryAuthMenu(Long roleId) throws Exception {
-        List<SysMenuVo> sysMenuVos = authMenu(Collections.singletonList(roleId), false);
-        return NtmResult.success(sysMenuVos);
-    }
-
-    private List<SysMenuVo> authMenu(List<Long> roleIds, boolean filterFirstMenu) throws Exception {
-        Set<Long> set = queryRoleMenuByRoleIds(roleIds)
+        Set<Long> set = queryRoleMenuByRoleIds(Collections.singletonList(roleId))
                 .parallelStream()
                 .map(SysRoleMenu::getMenuId)
                 .collect(Collectors.toSet());
@@ -107,26 +144,11 @@ public class SysAuthMgr {
         Map<String, List<SysMenuVo>> _1_2 = _2.stream()
                                               .sorted(Comparator.comparingInt(SysMenuVo::getSort))
                                               .collect(Collectors.groupingBy(SysMenuVo::getPid));
-        // 是否需要过滤为空的1级菜单
-        if (filterFirstMenu) {
-            Iterator<SysMenuVo> iterable = _1.iterator();
-            while (iterable.hasNext()) {
-                SysMenuVo item = iterable.next();
-                List<SysMenuVo> tmp = _1_2.get(item.getId());
-                if (CollectionUtils.isNotEmpty(tmp)) {
-                    item.setChildren(tmp);
-                    item.setHasChildren(true);
-                } else {
-                    iterable.remove();
-                }
-            }
-        } else {
-            for (SysMenuVo item : _1) {
-                item.setChildren(_1_2.get(item.getId()));
-            }
+        for (SysMenuVo item : _1) {
+            item.setChildren(_1_2.get(item.getId()));
         }
 
-        return _1;
+        return NtmResult.success(_1);
     }
 
     @Transactional
