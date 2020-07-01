@@ -52,7 +52,11 @@ public class SysAuthMgr {
      * 获取一个管理员对应的菜单权限
      */
     public NtmResult queryMyAuthMenu(Long adminId) throws Exception {
-        List<SysMenuVo> sysMenuVos = authMenu(sysUserMgr.queryRoleIds(adminId), true);
+        List<Long> roleIds = sysUserMgr.queryRoleIds(adminId);
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return NtmResult.fail("管理员信息错误：没有绑定系统角色");
+        }
+        List<SysMenuVo> sysMenuVos = authMenu(roleIds, true);
         return NtmResult.success(sysMenuVos);
     }
 
@@ -71,6 +75,7 @@ public class SysAuthMgr {
                 .collect(Collectors.toSet());
 
         List<SysMenu> menus = sysMenuMgr.allMenus();
+
         List<SysMenuVo> _2 = menus.stream()
                                   .filter(i -> i.getType().equals(IamConstant.MENU_SECOND))
                                   .map(i -> SysMenuVo.of(i, set.contains(i.getId())))
@@ -112,7 +117,7 @@ public class SysAuthMgr {
                     item.setChildren(tmp);
                     item.setHasChildren(true);
                 } else {
-                    _1.remove(item);
+                    iterable.remove();
                 }
             }
         } else {

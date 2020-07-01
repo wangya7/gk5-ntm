@@ -169,7 +169,7 @@ public class NtmApiMgr {
     @Transactional
     public NtmResult modifyApi(ApiDto dto) throws Exception {
         Long id = dto.getApiId();
-        NtmApi record = queryById(id);
+        NtmApi record = masterNtmApiDao.selectById(id);
         if (record == null) {
             return NtmResult.fail("接口不存在");
         }
