@@ -131,6 +131,12 @@ public class SysUserMgr {
         if (user == null) {
             return NtmResult.fail("管理员信息不存在");
         }
+
+        if (user.getStatus() != NtmConstant.EFF_STATUS) {
+            return NtmResult.fail("非正常在职人员禁止登陆");
+        }
+
+
         if (user.getPassword().equals(MD5Util.md5LowerCase(dto.getMobile() + dto.getPassword()))) {
             SubjectExtend subject = new SubjectExtend();
             subject.setId(user.getId());
