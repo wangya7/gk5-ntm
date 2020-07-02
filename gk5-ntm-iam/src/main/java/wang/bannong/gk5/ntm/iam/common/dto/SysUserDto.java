@@ -26,4 +26,6 @@ public class SysUserDto extends SysBaseDto {
     private Long   creatorId;
     private String roleIds;
 
+    private Long   storeId;
+
 }
