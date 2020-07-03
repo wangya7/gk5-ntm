@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="wang.bannong.gk5.ntm.core.dao.NtmConfigSettingDao">
+<mapper namespace="wang.bannong.gk5.ntm.rpc.dao.NtmConfigSettingDao">
   <resultMap id="BaseResultMap" type="wang.bannong.gk5.ntm.common.domain.NtmConfigSetting">
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="pid" jdbcType="BIGINT" property="pid"/>
