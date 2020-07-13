@@ -21,7 +21,7 @@ public enum ResultCode {
     api_not_exist(22, "接口不存在"),
     api_forbid(23, "接口已被禁用"),
     ia_invalid(25, "重新登录"),
-    request_too_frequently(26, "请求过于频繁，稍后重试"),
+    request_too_frequently(26, "操作频繁，稍后再试"),
     sign_invalid(27, "签名无效"),
     app_too_low(29, "APP版本过低，需要更新"),
     request_timeout(31, "请求超时"),
