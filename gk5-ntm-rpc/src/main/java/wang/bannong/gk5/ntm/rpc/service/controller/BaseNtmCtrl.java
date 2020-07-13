@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.constant.ApiConfig;
+import wang.bannong.gk5.ntm.common.constant.HttpMethod;
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.dto.DynamicDto;
@@ -18,9 +19,9 @@ import wang.bannong.gk5.ntm.common.model.NtmRequest;
 import wang.bannong.gk5.ntm.common.model.NtmResponse;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.ResultCode;
+import wang.bannong.gk5.ntm.common.util.RamRateLimiterUtils;
 import wang.bannong.gk5.ntm.rpc.handler.ApiHandler;
 import wang.bannong.gk5.ntm.rpc.handler.AuthTokenHandler;
-import wang.bannong.gk5.ntm.rpc.handler.IAuthorityAccess;
 import wang.bannong.gk5.ntm.rpc.handler.RequestHandler;
 import wang.bannong.gk5.ntm.rpc.rpc.NtmRpcClient;
 import wang.bannong.gk5.ntm.rpc.service.BaseInnerService;
@@ -40,7 +41,6 @@ public class BaseNtmCtrl {
     @Autowired
     private        NtmTracesManager ntmTracesManager;
     private static ApiHandler       apiHandler;
-    private static IAuthorityAccess authorityAccess;
 
     @RequestMapping(value = "/ntmx", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public NtmResponse apix(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -50,11 +50,9 @@ public class BaseNtmCtrl {
     @RequestMapping(value = "/ntm", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public NtmResponse api(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         NtmResult domain = RequestHandler.checkAndConvert2NtmRequest(servletRequest);
-        if (!domain.isSuccess())
+        if (!domain.isSuccess()) {
             return log(NtmResponse.builder(domain).builder());
-
-        // before ip rate limiter
-
+        }
 
         return apix(domain.getData());
     }
@@ -66,19 +64,37 @@ public class BaseNtmCtrl {
             apiHandler = SpringBeanUtils.getBean("apiHandler", ApiHandler.class);
         }
         NtmResult domain = apiHandler.checkApi(request.getApi(), request.getV(), request.getAppid());
-        if (!domain.isSuccess())
+        if (!domain.isSuccess()) {
             return persistence(request, NtmResponse.builder(domain).builder(), null);
+        }
+
         NtmApi ntmApi = domain.getData();
+
+        // 对IP简单的限流 需要后期细化设计
+        String ip = request.getIp();
+        HttpMethod httpMethod = request.getMethod();
+        if (httpMethod == HttpMethod.POST && ntmApi.getIsIa() && ntmApi.getDailyFlowLimit() > 0) {
+            boolean rateLimiterResult = RamRateLimiterUtils.isActionAllowed(ip,
+                    request.getAppid() + request.getApi() + request.getV(), 1, 500);
+            log.info("[IA] RateLimiter, ip[{}], appid_v[{}], result[{}]", ip,
+                    request.getAppid() + request.getV(), rateLimiterResult);
+            if (!rateLimiterResult) {
+                return persistence(request, NtmResponse.builder(NtmResult
+                        .of(ResultCode.request_too_frequently)).builder(), null);
+            }
+        }
 
         // 2. check token & update token
         domain = AuthTokenHandler.checkAuthToken(ntmApi, innerRequest);
-        if (!domain.isSuccess())
+        if (!domain.isSuccess()) {
             return persistence(request, NtmResponse.builder(domain).builder(), ntmApi);
+        }
 
-        // 3. check ntmApi params
+        // 3. check ntmApi params & rate limiter
         domain = apiHandler.checkApiParams(innerRequest, ntmApi);
-        if (!domain.isSuccess())
+        if (!domain.isSuccess()) {
             return persistence(request, NtmResponse.builder(domain).builder(), ntmApi);
+        }
 
         NtmResponse response = NtmResponse.builder(innerApi(innerRequest, ntmApi))
                                           .api(ntmApi)

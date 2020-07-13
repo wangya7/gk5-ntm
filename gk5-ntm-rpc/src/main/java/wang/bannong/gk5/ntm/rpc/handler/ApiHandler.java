@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
-import wang.bannong.gk5.ntm.rpc.inner.NtmApiMgr;
 import wang.bannong.gk5.ntm.common.constant.ApiStatusEnum;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.domain.NtmApiParam;
 import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.ResultCode;
+import wang.bannong.gk5.ntm.rpc.inner.NtmApiMgr;
 
 @Slf4j
 @Component

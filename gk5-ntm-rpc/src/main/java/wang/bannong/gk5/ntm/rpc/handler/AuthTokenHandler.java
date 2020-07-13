@@ -19,9 +19,10 @@ import wang.bannong.gk5.ntm.common.model.ResultCode;
 import wang.bannong.gk5.util.SpringBeanUtils;
 import wang.bannong.gk5.ntm.common.model.Subject;
 
+
 public class AuthTokenHandler {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(AuthTokenHandler.class);
+    private final static Logger log = LoggerFactory.getLogger(AuthTokenHandler.class);
 
     private static CacheManager cacheManager = null;
 
@@ -43,11 +44,6 @@ public class AuthTokenHandler {
         if (isIa) {
             if (null == authToken || TokenHandler.isExpireToken(authToken)) {
                 return NtmResult.of(ResultCode.ia_invalid);
-            }
-
-            // 限流 500毫秒只允许请求一次
-            if (!SubjectRateLimiterHandler.isActionAllowed(authToken.getIa(), ntmApi.getAppid(), 1, 800)) {
-                return NtmResult.of(ResultCode.request_too_frequently);
             }
         }
 
@@ -89,7 +85,7 @@ public class AuthTokenHandler {
         authToken.setLastAccessTime(null);
 
         String key = getIaKey(appid, ia);
-        LOGGER.info("[IA]create token, key={}, value={}, expire={}", key, authToken, TokenHandler.TOKEN_TIMEOUT);
+        log.info("[IA]create token, key={}, value={}, expire={}", key, authToken, TokenHandler.TOKEN_TIMEOUT);
         cacheManager.put(key, authToken, TokenHandler.TOKEN_TIMEOUT);
         cacheManager.expire(key, TokenHandler.TOKEN_TIMEOUT);
         request.setIa(authToken.getIa());
@@ -124,7 +120,7 @@ public class AuthTokenHandler {
 
             cacheManager.del(getIaKey(appid, ia));
             String key = getIaKey(appid, iaNew);
-            LOGGER.info("[IA]update token, new key={}, value={}, expire={}", key, authTokenNew, TokenHandler.TOKEN_TIMEOUT);
+            log.info("[IA]update token, new key={}, value={}, expire={}", key, authTokenNew, TokenHandler.TOKEN_TIMEOUT);
             cacheManager.put(key, authTokenNew, TokenHandler.TOKEN_TIMEOUT);
             cacheManager.expire(key, TokenHandler.TOKEN_TIMEOUT);
 
@@ -133,7 +129,7 @@ public class AuthTokenHandler {
             authToken.setLastAccessTime(authToken.getAccessTime());
             authToken.setAccessTime(now);
             String key = getIaKey(authToken.getAppid(), ia);
-            LOGGER.info("[IA]update token, old key={}, value={}, expire={}", key, authToken, TokenHandler.TOKEN_TIMEOUT);
+            log.info("[IA]update token, old key={}, value={}, expire={}", key, authToken, TokenHandler.TOKEN_TIMEOUT);
             cacheManager.put(key, authToken, TokenHandler.TOKEN_TIMEOUT);
             cacheManager.expire(key, TokenHandler.TOKEN_TIMEOUT);
             return authToken;
