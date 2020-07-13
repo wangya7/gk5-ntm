@@ -52,6 +52,10 @@ public class BaseNtmCtrl {
         NtmResult domain = RequestHandler.checkAndConvert2NtmRequest(servletRequest);
         if (!domain.isSuccess())
             return log(NtmResponse.builder(domain).builder());
+
+        // before ip rate limiter
+
+
         return apix(domain.getData());
     }
 

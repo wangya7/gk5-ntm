@@ -1,19 +1,22 @@
 package wang.bannong.gk5.ntm.rpc.rpc;
 
+import org.apache.dubbo.config.ReferenceConfig;
+import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericException;
+import org.apache.dubbo.rpc.service.GenericService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 
+import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.constant.ApiConfig;
 import wang.bannong.gk5.ntm.common.dto.DynamicDto;
 import wang.bannong.gk5.ntm.common.exception.NtmException;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.ResultCode;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 网关调用业务模块   单向
@@ -24,21 +27,27 @@ public final class NtmRpcClient {
 
     private static final String[] parameterTypeMap = new String[]{"java.util.Map"};
     private static final String[] parameterTypeDto = new String[]{"wang.bannong.gk5.ntm.common.dto.DynamicDto"};
+    private static final String   keyGenerator     = "_DEFAULT_";
 
 
     public static NtmResult $invoke(String serviceInterface, String method, String[] parameterType, Object[] args) {
         Object result = null;
+        ReferenceConfigCache cache = ReferenceConfigCache.getCache(keyGenerator);
+        ReferenceConfig<GenericService> reference = ReferenceConfigBuilder.getSynch(serviceInterface);
         try {
-            result = ReferenceConfigBuilder.getSynch(serviceInterface).get().$invoke(method, parameterType, args);
+            GenericService genericService = cache.get(reference);
+            result = genericService.$invoke(method, parameterType, args);
         } catch (GenericException e) {
             log.error("=======> RPC(req): serviceInterface={}, method={}, parameterType={}, args={}",
                     serviceInterface, method, parameterType, args);
             log.error("=======> RPC(rsp): exception detail:", e);
+            cache.destroy(reference);
             return NtmResult.of(ResultCode.rpc_invoke_exception);
         } catch (NtmException e) {
             log.error("=======> RPC(req): serviceInterface={}, method={}, parameterType={}, args={}",
                     serviceInterface, method, parameterType, args);
             log.error("=======> RPC(rsp): exception detail:", e);
+            cache.destroy(reference);
             return NtmResult.of(ResultCode.rpc_invoke_exception);
         }
 

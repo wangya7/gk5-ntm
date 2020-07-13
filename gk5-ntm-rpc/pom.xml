@@ -12,7 +12,7 @@
 
   <groupId>wang.bannong</groupId>
   <artifactId>gk5-ntm-rpc</artifactId>
-  <version>1.0.0-beta</version>
+  <version>1.0.1-beta</version>
   <name>gk5-ntm-rpc</name>
   <url>http://maven.apache.org</url>
   <description>gk5-ntm-common</description>

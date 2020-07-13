@@ -44,6 +44,11 @@ public class AuthTokenHandler {
             if (null == authToken || TokenHandler.isExpireToken(authToken)) {
                 return NtmResult.of(ResultCode.ia_invalid);
             }
+
+            // 限流 500毫秒只允许请求一次
+            if (!SubjectRateLimiterHandler.isActionAllowed(authToken.getIa(), ntmApi.getAppid(), 1, 800)) {
+                return NtmResult.of(ResultCode.request_too_frequently);
+            }
         }
 
         AuthToken authTokenNew = updateAuthToken(authToken, ia);
@@ -58,10 +63,10 @@ public class AuthTokenHandler {
     /**
      * 创建Token
      *
-     * @param subject  关联实体ID
-     * @param role     角色
-     * @param extend   扩展字段
-     * @param request  网关请求
+     * @param subject 关联实体ID
+     * @param role    角色
+     * @param extend  扩展字段
+     * @param request 网关请求
      */
     public static void creteAuthToken(Subject subject, AuthToken.Role role, Map<String, String> extend, NtmRequest request) {
         initCacheManager();
@@ -84,7 +89,7 @@ public class AuthTokenHandler {
         authToken.setLastAccessTime(null);
 
         String key = getIaKey(appid, ia);
-        LOGGER.info("[IA]create token, key={}, value={}, expire={}",key, authToken, TokenHandler.TOKEN_TIMEOUT);
+        LOGGER.info("[IA]create token, key={}, value={}, expire={}", key, authToken, TokenHandler.TOKEN_TIMEOUT);
         cacheManager.put(key, authToken, TokenHandler.TOKEN_TIMEOUT);
         cacheManager.expire(key, TokenHandler.TOKEN_TIMEOUT);
         request.setIa(authToken.getIa());
@@ -95,7 +100,6 @@ public class AuthTokenHandler {
      *
      * @param authToken authToken
      * @param ia        ia
-     * @return
      */
     public static AuthToken updateAuthToken(AuthToken authToken, String ia) {
         if (authToken == null || StringUtils.isBlank(ia)) {
@@ -136,10 +140,11 @@ public class AuthTokenHandler {
         }
     }
 
-    private static AuthToken getAuthToken(String appid,String ia) {
-        if (StringUtils.isBlank(ia)) return null;
+    private static AuthToken getAuthToken(String appid, String ia) {
+        if (StringUtils.isBlank(ia))
+            return null;
 
-        CacheResult<AuthToken> result = cacheManager.getObject(getIaKey( appid,ia));
+        CacheResult<AuthToken> result = cacheManager.getObject(getIaKey(appid, ia));
         if (result.isSucc() && result.getModule() != null) {
             return result.getModule();
         }
@@ -151,7 +156,7 @@ public class AuthTokenHandler {
     }
 
     /** 退出清楚 */
-    public static void clearIa(String appid,String ia) {
-        cacheManager.del(getIaKey(appid,ia));
+    public static void clearIa(String appid, String ia) {
+        cacheManager.del(getIaKey(appid, ia));
     }
 }
