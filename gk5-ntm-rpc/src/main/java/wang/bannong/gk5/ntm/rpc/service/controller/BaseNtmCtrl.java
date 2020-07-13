@@ -77,7 +77,7 @@ public class BaseNtmCtrl {
             boolean rateLimiterResult = RamRateLimiterUtils.isActionAllowed(ip,
                     request.getAppid() + request.getApi() + request.getV(), 1, 500);
             log.info("[IA] RateLimiter, ip[{}], appid_v[{}], result[{}]", ip,
-                    request.getAppid() + request.getV(), rateLimiterResult);
+                    request.getAppid() + request.getApi() + request.getV(), rateLimiterResult);
             if (!rateLimiterResult) {
                 return persistence(request, NtmResponse.builder(NtmResult
                         .of(ResultCode.request_too_frequently)).builder(), null);
