@@ -9,6 +9,7 @@ public class NtmApiVo implements Serializable {
     private static final long serialVersionUID = 3366245839146063293L;
 
     private String  apiId;
+    private String  dictId;
     private String  unique;
     private String  name;
     private int     version;

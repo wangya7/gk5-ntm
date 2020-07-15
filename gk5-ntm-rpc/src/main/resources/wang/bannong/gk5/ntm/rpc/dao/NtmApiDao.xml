@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.bannong.gk5.ntm.rpc.dao.NtmApiDao">
+  <resultMap id="BaseResultMap" type="wang.bannong.gk5.ntm.common.domain.NtmApi">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="dict_id" jdbcType="BIGINT" property="dictId"/>
+    <result column="unique" jdbcType="VARCHAR" property="unique"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="version" jdbcType="INTEGER" property="version"/>
+    <result column="method" jdbcType="TINYINT" property="method"/>
+    <result column="appid" jdbcType="VARCHAR" property="appid"/>
+    <result column="inner_interface" jdbcType="VARCHAR" property="innerInterface"/>
+    <result column="inner_method" jdbcType="VARCHAR" property="innerMethod"/>
+    <result column="is_ia" jdbcType="BIT" property="isIa"/>
+    <result column="is_async" jdbcType="BIT" property="isAsync"/>
+    <result column="daily_flow_limit" jdbcType="INTEGER" property="dailyFlowLimit"/>
+    <result column="result" jdbcType="VARCHAR" property="result"/>
+    <result column="status" jdbcType="TINYINT" property="status"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, dict_id, unique, name, version, method, appid, inner_interface, inner_method, is_ia, is_async,
+    daily_flow_limit, result, status, create_time, modify_time
+  </sql>
+
+  <update id="updateDict">
+    update ntm_api
+    set dict_id = #{dictId}
+    where id in <foreach collection="apiIds" open="(" separator="," close=")" item="apiId">#{apiId}</foreach>
+  </update>
+
+  <select id="all" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List"/> from ntm_api
+  </select>
+
+</mapper>

@@ -1,0 +1,41 @@
+Configuration:
+  status: warn
+  Properties:
+    Property:
+    - name: log.level.console
+      value: trace
+    - name: log.path
+      value: /home/tomcat/logs
+    - name: project.name
+      value: ntm-sample-rpc
+
+  Appenders:
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      ThresholdFilter:
+        level: ${sys:log.level.console}
+        onMatch: ACCEPT
+        onMismatch: DENY
+      PatternLayout:
+        pattern: '%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n'
+
+    RollingFile:
+    - name: ROLLING_FILE
+      ignoreExceptions: false
+      fileName: ${sys:log.path}/${project.name}.log
+      filePattern: ${sys:log.path}/${date:yyyy-MM}/${project.name}-%d{yyyy-MM-dd}-%i.log.gz
+      PatternLayout:
+        pattern: '%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n'
+      Policies:
+        TimeBasedTriggeringPolicy:
+          interval: 1
+        SizeBasedTriggeringPolicy:
+          size: 64MB
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+      - ref: CONSOLE
+      - ref: ROLLING_FILE

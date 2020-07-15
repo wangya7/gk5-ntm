@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.bannong.gk5.ntm.rpc.dao.NtmDirectoryDao">
+  <resultMap id="BaseResultMap" type="wang.bannong.gk5.ntm.common.domain.NtmDirectory">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="pid" jdbcType="BIGINT" property="pid"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="sort" jdbcType="INTEGER" property="sort"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pid, name, sort
+  </sql>
+
+  <select id="selectByPid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from ntm_directory
+    where pid = #{pid}
+    order by sort
+  </select>
+
+  <select id="selectByPids" parameterType="java.util.List" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from ntm_directory
+    where pid in <foreach collection="list" open="(" separator="," close=")" item="pid">#{pid}</foreach>
+  </select>
+
+  <select id="selectByIdAndName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from ntm_directory
+    where pid = #{pid} and name = #{name}
+  </select>
+</mapper>

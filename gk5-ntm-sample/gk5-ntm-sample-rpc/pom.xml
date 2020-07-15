@@ -1,0 +1,31 @@
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>wang.bannong</groupId>
+  <artifactId>gk5-ntm-sample-rpc</artifactId>
+  <version>1.0.0-beta</version>
+  <name>gk5-ntm-sample-rpc</name>
+  <packaging>jar</packaging>
+  <url>http://bannong.wang</url>
+  <description>gk5-ntm-sample-rpc</description>
+
+  <properties>
+    <gk5-ntm-rpc.version>1.0.1-beta</gk5-ntm-rpc.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>wang.bannong</groupId>
+      <artifactId>gk5-starter</artifactId>
+      <version>1.1.1-beta</version>
+    </dependency>
+    <dependency>
+      <groupId>wang.bannong</groupId>
+      <artifactId>gk5-ntm-rpc</artifactId>
+      <version>${gk5-ntm-rpc.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>

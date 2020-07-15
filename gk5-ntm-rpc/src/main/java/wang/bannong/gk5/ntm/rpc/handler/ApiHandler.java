@@ -10,12 +10,13 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 import wang.bannong.gk5.ntm.common.constant.ApiStatusEnum;
+import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.domain.NtmApiParam;
 import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.common.model.ResultCode;
-import wang.bannong.gk5.ntm.rpc.inner.NtmApiMgr;
+import wang.bannong.gk5.ntm.rpc.biz.NtmApiMgr;
 
 @Slf4j
 @Component
@@ -51,7 +52,7 @@ public class ApiHandler {
         if (CollectionUtils.isNotEmpty(params)) {
             List<String> notNullParams = new ArrayList<>();
             for (NtmApiParam param : params) {
-                if (param.getIsRequired()) {
+                if (param.getStatus().equals(NtmConstant.EFF_STATUS) && param.getIsRequired()) {
                     String name = param.getName();
                     if (StringUtils.isBlank(innerRequest.get(name))) {
                         notNullParams.add(name);

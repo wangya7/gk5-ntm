@@ -12,6 +12,7 @@ public class NtmApi implements Serializable {
     private static final long serialVersionUID = -7729924480298703376L;
 
     private Long    id;
+    private Long    dictId;
     @TableField(value = "`unique`")
     private String  unique;
     private String  name;

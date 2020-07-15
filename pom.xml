@@ -21,8 +21,8 @@
 
   <scm>
     <url>http://bannong.wang</url>
-    <connection>scm:git:https://github.com/wangya7/gk5.git</connection>
-    <developerConnection>scm:git:https://github.com/wangya7/gk5.git</developerConnection>
+    <connection>scm:git:https://github.com/wangya7/gk5-ntm.git</connection>
+    <developerConnection>scm:git:https://github.com/wangya7/gk5-ntm.git</developerConnection>
   </scm>
 
   <developers>

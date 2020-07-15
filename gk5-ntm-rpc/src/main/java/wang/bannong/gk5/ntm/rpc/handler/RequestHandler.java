@@ -18,7 +18,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import wang.bannong.gk5.ntm.rpc.inner.ConfigTools;
+import wang.bannong.gk5.ntm.rpc.biz.ConfigTools;
 import wang.bannong.gk5.ntm.common.constant.ApiConfig;
 import wang.bannong.gk5.ntm.common.constant.HttpMethod;
 import wang.bannong.gk5.ntm.common.constant.NtmConfigSetting;
