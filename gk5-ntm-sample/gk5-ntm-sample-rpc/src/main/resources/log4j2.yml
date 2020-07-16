@@ -5,7 +5,7 @@ Configuration:
     - name: log.level.console
       value: trace
     - name: log.path
-      value: /home/tomcat/logs
+      value: /Users/wangya/Downloads/logs
     - name: project.name
       value: ntm-sample-rpc
 

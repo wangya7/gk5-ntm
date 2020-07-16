@@ -21,7 +21,7 @@
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
   </resultMap>
   <sql id="Base_Column_List">
-    id, dict_id, unique, name, version, method, appid, inner_interface, inner_method, is_ia, is_async,
+    id, dict_id, `unique`, name, version, method, appid, inner_interface, inner_method, is_ia, is_async,
     daily_flow_limit, result, status, create_time, modify_time
   </sql>
 

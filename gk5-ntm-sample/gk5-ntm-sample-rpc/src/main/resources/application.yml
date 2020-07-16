@@ -5,6 +5,46 @@ logging:
 spring:
   application:
     name: ntm-sample-rpc
+  data:
+    mongodb:
+      uri: mongodb://192.168.3.20:27017/ntmx
+
+cache:
+  redis:
+    host: 192.168.3.20
+    port: 6379
+    password:
+    timeout: 50
+    poolMaxTotal: 500
+    poolMaxWaitMillis: -1
+    poolMaxIdle: 150
+    poolMinIdle: 100
+    poolTestOnBorrow: true
+
+datasource:
+  mappersPath: wang.bannong.gk5.ntm.rpc.dao
+  mapperLocations: classpath*:/wang/bannong/gk5/ntm/rpc/dao/*.xml
+  primary: master
+  dbs:
+  - key: master
+    host: 192.168.3.20
+    port: 3306
+    db: ntmx2
+    username: dbmaster
+    password: qwer1234!@#$
+    minIdle: 10
+    maxIdle: 10
+    connectionTimeout: 3000
+  - key: slave
+    host: 192.168.3.20
+    port: 3306
+    db: ntmx2
+    username: dbmaster
+    password: qwer1234!@#$
+    minIdle: 10
+    maxIdle: 10
+    connectionTimeout: 3000
+
 dubbo:
   appCfgName: ntmx
   registryAddress: zookeeper://192.168.3.27:2181
