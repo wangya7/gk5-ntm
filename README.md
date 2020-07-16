@@ -80,3 +80,82 @@ ia|String|Y|32位认证标识|0c7b79497a8b3d6a8cd06b21883e6a28
 * [接口文档](/gk5-ntm-doc/DOC-API.MD)
 * [接口参数文档](/gk5-ntm-doc/DOC-APIPARAM.MD)
 * [接口统计文档](/gk5-ntm-doc/DOC-APICOLLECT.MD)
+
+
+### NGINX 配置
+```nginx
+#user  nobody;
+worker_processes  3;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        # HTTPS传输
+        listen       443 ssl;
+        # 反向代理的域名
+        server_name  ntmx-internal.zdautoservice.com;
+
+
+        ssl_certificate ../cert/zd_new.pem;
+        ssl_certificate_key ../cert/zd_new.key;
+
+        ssl_session_cache shared:SSL:1m;
+        ssl_session_timeout 5m;
+
+        ssl_ciphers HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers on;
+
+
+        #error_page  404              /404.html;
+        location / {
+            # CORS 配置
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Methods' 'GET,POST,OPTIONS';
+            # 是否允许cookie传输
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Headers' 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With,X-Data-Type,X-Auth-Token,channel,ia,oia,v,ts,lng,lat,ttid,appid';
+            
+            if ($request_method = 'OPTIONS') {
+                add_header Access-Control-Allow-Origin *;
+                add_header Access-Control-Max-Age 1728000;
+                add_header Access-Control-Allow-Methods GET,POST,OPTIONS;
+                add_header Access-Control-Allow-Headers  'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With,X-Data-Type,X-Auth-Token,channel,ia,oia,v,ts,lng,lat,ttid,appid';
+                add_header Content-Type' 'application/x-www-form-urlencoded;charset=utf-8';
+                add_header Content-Length 0 ;
+                return 204;
+            }
+            # 根据自己的容器端口修改
+            proxy_pass http://127.0.0.1:8085/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header REMOTE-HOST $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       }
+
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+```
