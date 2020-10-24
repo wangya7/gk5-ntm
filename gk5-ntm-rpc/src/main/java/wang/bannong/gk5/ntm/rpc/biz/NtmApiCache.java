@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import lombok.extern.slf4j.Slf4j;
-import wang.bannong.gk5.boot.redis.CacheOpr;
-import wang.bannong.gk5.boot.redis.CacheResult;
+import wang.bannong.gk5.boot.starter.redis.CacheOpr;
+import wang.bannong.gk5.boot.starter.redis.CacheResult;
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.domain.NtmApiParam;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
-import wang.bannong.gk5.boot.mongo.MongoOpr;
+import wang.bannong.gk5.boot.starter.mongo.MongoOpr;
 import wang.bannong.gk5.ntm.common.bo.NtmTracesBo;
 import wang.bannong.gk5.ntm.common.constant.ApiConfig;
 import wang.bannong.gk5.ntm.common.model.GroupModel;

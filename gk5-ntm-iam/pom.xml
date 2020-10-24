@@ -30,7 +30,7 @@
     </dependency>
     <dependency>
       <groupId>wang.bannong</groupId>
-      <artifactId>gk5-boot-mybatis</artifactId>
+      <artifactId>gk5-boot-starter-mybatis</artifactId>
       <version>${gk5-boot.version}</version>
     </dependency>
     <dependency>

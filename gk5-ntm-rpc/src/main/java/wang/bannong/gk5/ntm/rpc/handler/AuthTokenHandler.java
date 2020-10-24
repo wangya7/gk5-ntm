@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.Map;
 
-import wang.bannong.gk5.boot.redis.CacheOpr;
-import wang.bannong.gk5.boot.redis.CacheResult;
+import wang.bannong.gk5.boot.starter.redis.CacheOpr;
+import wang.bannong.gk5.boot.starter.redis.CacheResult;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.model.AuthToken;
 import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
