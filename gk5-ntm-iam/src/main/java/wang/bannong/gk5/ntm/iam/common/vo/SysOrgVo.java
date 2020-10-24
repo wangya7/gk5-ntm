@@ -3,8 +3,8 @@ package wang.bannong.gk5.ntm.iam.common.vo;
 import java.io.Serializable;
 import java.util.List;
 
-import hz.qxbn.taoism.administrative.model.Administrative;
 import lombok.Data;
+import wang.bannong.gk5.administrative.model.Administrative;
 
 @Data
 public class SysOrgVo implements Serializable {

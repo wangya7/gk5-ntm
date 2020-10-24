@@ -49,11 +49,17 @@
   </modules>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
+
     <lombok.version>1.16.20</lombok.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-collections.version>4.4</commons-collections.version>
     <guava.version>28.0-jre</guava.version>
-    <fastjson.version>1.2.37</fastjson.version>
+    <fastjson.version>1.2.73</fastjson.version>
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
   </properties>
 
@@ -91,33 +97,5 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
-
-
-  <profiles>
-    <profile>
-      <id>jdk-1.8</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <jdk>${java.version}</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
-      </properties>
-    </profile>
-  </profiles>
-
-  <distributionManagement>
-    <repository>
-      <id>releases</id>
-      <name>Nexus Releases Repository</name>
-      <url>http://192.168.3.158:8081/repository/maven-releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <url>http://192.168.3.158:8081/repository/maven-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
 
 </project>

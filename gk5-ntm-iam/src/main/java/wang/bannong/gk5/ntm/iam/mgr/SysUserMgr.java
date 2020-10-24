@@ -36,7 +36,7 @@ import wang.bannong.gk5.ntm.iam.dao.SysUserRoleDao;
 import wang.bannong.gk5.util.Constant;
 import wang.bannong.gk5.util.MD5Util;
 import wang.bannong.gk5.util.SnowFlakeGenerator;
-import wang.bannong.gk5.util.domain.Pair;
+import wang.bannong.gk5.util.model.Pair;
 
 @Slf4j
 @Component

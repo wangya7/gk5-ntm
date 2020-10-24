@@ -23,7 +23,7 @@ import wang.bannong.gk5.ntm.iam.common.dto.SysRoleDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysRoleVo;
 import wang.bannong.gk5.ntm.iam.dao.SysRoleDao;
 import wang.bannong.gk5.util.DateUtils;
-import wang.bannong.gk5.util.domain.Pair;
+import wang.bannong.gk5.util.model.Pair;
 
 @Slf4j
 @Component

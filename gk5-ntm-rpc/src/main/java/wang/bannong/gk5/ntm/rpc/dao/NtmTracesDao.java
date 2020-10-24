@@ -13,13 +13,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
-import wang.bannong.gk5.normdb.mongo.MongoManager;
+import wang.bannong.gk5.boot.mongo.MongoOpr;
 import wang.bannong.gk5.ntm.common.bo.NtmTracesBo;
 import wang.bannong.gk5.ntm.common.constant.ApiConfig;
 import wang.bannong.gk5.ntm.common.model.GroupModel;
 import wang.bannong.gk5.ntm.common.model.NtmTraces;
 import wang.bannong.gk5.util.DateUtils;
-
 
 /**
  * Created by bn. on 2019/10/11 5:03 PM
@@ -30,12 +29,12 @@ public class NtmTracesDao {
     public static final String KEY = "ntm.traces";
 
     @Autowired
-    private MongoManager mongoManager;
+    private MongoOpr mongoOpr;
 
     public void insert(NtmTraces bo) throws Exception {
         bo.setCreateMs(System.currentTimeMillis());
         bo.setCreateTime(DateUtils.format(new Date()));
-        mongoManager.insert(bo, KEY);
+        mongoOpr.insert(bo, KEY);
     }
 
     public List<NtmTraces> query(NtmTracesBo bo) throws Exception {
@@ -45,11 +44,11 @@ public class NtmTracesDao {
         query.with(new Sort(Direction.DESC, ApiConfig.CREATE_MS))
              .skip(skip).limit(pageSize);
 
-        return mongoManager.find(query, NtmTraces.class, KEY);
+        return mongoOpr.find(query, NtmTraces.class, KEY);
     }
 
     public long count(NtmTracesBo bo) throws Exception {
-        return mongoManager.count(buildQuery(bo), KEY);
+        return mongoOpr.count(buildQuery(bo), KEY);
     }
 
     public Query buildQuery(NtmTracesBo bo) throws Exception {
@@ -143,8 +142,8 @@ public class NtmTracesDao {
                 Aggregation.sort(new Sort(Direction.DESC, GroupModel.MODEL_TOTAL)),
                 Aggregation.skip(skip),
                 Aggregation.limit(pageSize));
-        return mongoManager.aggregate(aggregation, KEY, GroupModel.class)
-                           .getMappedResults();
+        return mongoOpr.aggregate(aggregation, KEY, GroupModel.class)
+                       .getMappedResults();
     }
 
     public long countGroupApiWithTime(NtmTracesBo bo) throws Exception {
@@ -154,7 +153,7 @@ public class NtmTracesDao {
                            .count().as(GroupModel.MODEL_TOTAL)
                            .first(ApiConfig.API).as(GroupModel.MODEL_NAME)
                            .max(ApiConfig.API_ID).as(GroupModel.MODEL_ID));
-        List<GroupModel> results = mongoManager.aggregate(aggregation, KEY, GroupModel.class).getMappedResults();
+        List<GroupModel> results = mongoOpr.aggregate(aggregation, KEY, GroupModel.class).getMappedResults();
         return CollectionUtils.isNotEmpty(results) ? results.size() : 0;
     }
 

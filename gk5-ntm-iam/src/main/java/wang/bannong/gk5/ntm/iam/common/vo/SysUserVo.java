@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 import wang.bannong.gk5.ntm.iam.common.domain.SysUser;
 import wang.bannong.gk5.util.DateUtils;
-import wang.bannong.gk5.util.domain.Pair;
+import wang.bannong.gk5.util.model.Pair;
 
 @Data
 public class SysUserVo implements Serializable {

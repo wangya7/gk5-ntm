@@ -15,15 +15,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import hz.qxbn.taoism.administrative.AdministrativeUtils;
 import lombok.extern.slf4j.Slf4j;
+import wang.bannong.gk5.administrative.AdministrativeUtils;
 import wang.bannong.gk5.ntm.common.model.NtmResult;
 import wang.bannong.gk5.ntm.iam.common.domain.SysOrg;
 import wang.bannong.gk5.ntm.iam.common.dto.SysOrgDto;
 import wang.bannong.gk5.ntm.iam.common.vo.SysOrgVo;
 import wang.bannong.gk5.ntm.iam.dao.SysOrgDao;
 import wang.bannong.gk5.util.DateUtils;
-import wang.bannong.gk5.util.domain.Pair;
+import wang.bannong.gk5.util.model.Pair;
 
 @Slf4j
 @Component

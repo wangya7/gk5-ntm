@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import lombok.extern.slf4j.Slf4j;
-import wang.bannong.gk5.cache.CacheManager;
-import wang.bannong.gk5.cache.CacheResult;
+import wang.bannong.gk5.boot.redis.CacheOpr;
+import wang.bannong.gk5.boot.redis.CacheResult;
 import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.domain.NtmApiParam;
@@ -40,7 +40,7 @@ public class NtmApiCache {
     @Autowired
     private NtmApiParamDao masterNtmApiParamDao;
     @Autowired
-    private CacheManager   cacheManager;
+    private CacheOpr       cacheOpr;
 
     public NtmResult refresh() {
         init();
@@ -50,8 +50,8 @@ public class NtmApiCache {
     @PostConstruct
     public void init() {
         log.info("caching api & apiParam beginning");
-        cacheManager.delBatch("ntm:api:*");
-        cacheManager.delBatch("ntm:api_param:*");
+        cacheOpr.delBatch("ntm:api:*");
+        cacheOpr.delBatch("ntm:api_param:*");
 
         if (masterNtmApiDao == null) {
             masterNtmApiDao = SpringBeanUtils.getBean("masterNtmApiDao", NtmApiDao.class);
@@ -63,14 +63,14 @@ public class NtmApiCache {
                        .forEach(item -> {
                            String key = String.format(CACHE_API_KEY, item.getUnique() + UNDERLINE
                                    + item.getVersion() + UNDERLINE + item.getAppid());
-                           cacheManager.put(key, item);
+                           cacheOpr.put(key, item);
                        });
 
         Map<Long, List<NtmApiParam>> params = masterNtmApiParamDao.selectList(new LambdaQueryWrapper<>())
                                                                   .parallelStream()
                                                                   .collect(Collectors.groupingBy(NtmApiParam::getApiId));
         for (Map.Entry<Long, List<NtmApiParam>> entry : params.entrySet()) {
-            cacheManager.put(String.format(CACHE_API_PARAM_APIID, entry.getKey()), new ArrayList<>(entry.getValue()));
+            cacheOpr.put(String.format(CACHE_API_PARAM_APIID, entry.getKey()), new ArrayList<>(entry.getValue()));
         }
 
         log.info("caching api & apiParam finishing");
@@ -78,7 +78,7 @@ public class NtmApiCache {
 
     public NtmApi queryApi(String unique, int version, String appid) {
         String key = String.format(CACHE_API_KEY, unique + UNDERLINE + version + UNDERLINE + appid);
-        CacheResult<NtmApi> cacheResult = cacheManager.getObject(key);
+        CacheResult<NtmApi> cacheResult = cacheOpr.getObject(key);
         if (cacheResult.isSucc() && cacheResult.getModule() != null) {
             return cacheResult.getModule();
         }
@@ -91,19 +91,19 @@ public class NtmApiCache {
         if (ntmApi == null) {
             return null;
         }
-        cacheManager.put(key, ntmApi);
+        cacheOpr.put(key, ntmApi);
         return ntmApi;
     }
 
     public void updateApiCache(NtmApi api) {
         String key = String.format(CACHE_API_KEY, api.getUnique() + UNDERLINE +
                 api.getVersion() + UNDERLINE + api.getAppid());
-        cacheManager.put(key, api);
+        cacheOpr.put(key, api);
     }
 
     public List<NtmApiParam> queryApiParams(Long apiId) {
         String key = String.format(CACHE_API_PARAM_APIID, apiId);
-        CacheResult<ArrayList<NtmApiParam>> cacheResult = cacheManager.getObject(key);
+        CacheResult<ArrayList<NtmApiParam>> cacheResult = cacheOpr.getObject(key);
         if (cacheResult.isSucc() && CollectionUtils.isNotEmpty(cacheResult.getModule())) {
             return cacheResult.getModule();
         }
@@ -114,7 +114,7 @@ public class NtmApiCache {
         if (CollectionUtils.isEmpty(params)) {
             return Collections.EMPTY_LIST;
         }
-        cacheManager.put(key, new ArrayList<>(params));
+        cacheOpr.put(key, new ArrayList<>(params));
         return params;
     }
 
@@ -124,7 +124,7 @@ public class NtmApiCache {
         wrapper.eq(NtmApiParam::getApiId, apiId);
         List<NtmApiParam> params = masterNtmApiParamDao.selectList(wrapper);
         if (CollectionUtils.isNotEmpty(params)) {
-            cacheManager.put(String.format(CACHE_API_PARAM_APIID, apiId), new ArrayList<>(params));
+            cacheOpr.put(String.format(CACHE_API_PARAM_APIID, apiId), new ArrayList<>(params));
         }
     }
 

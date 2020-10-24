@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.Map;
 
-import wang.bannong.gk5.cache.CacheManager;
-import wang.bannong.gk5.cache.CacheResult;
+import wang.bannong.gk5.boot.redis.CacheOpr;
+import wang.bannong.gk5.boot.redis.CacheResult;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.model.AuthToken;
 import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
@@ -24,12 +24,12 @@ public class AuthTokenHandler {
 
     private final static Logger log = LoggerFactory.getLogger(AuthTokenHandler.class);
 
-    private static CacheManager cacheManager = null;
+    private static CacheOpr cacheOpr = null;
 
     private static void initCacheManager() {
-        if (null == cacheManager) {
+        if (null == cacheOpr) {
             // TODO 采用持久化的Redis缓存
-            cacheManager = SpringBeanUtils.getBean("cacheManager", CacheManager.class);
+            cacheOpr = SpringBeanUtils.getBean("cacheManager", CacheOpr.class);
         }
     }
 
@@ -86,8 +86,8 @@ public class AuthTokenHandler {
 
         String key = getIaKey(appid, ia);
         log.info("[IA]create token, key={}, value={}, expire={}", key, authToken, TokenHandler.TOKEN_TIMEOUT);
-        cacheManager.put(key, authToken, TokenHandler.TOKEN_TIMEOUT);
-        cacheManager.expire(key, TokenHandler.TOKEN_TIMEOUT);
+        cacheOpr.put(key, authToken, TokenHandler.TOKEN_TIMEOUT);
+        cacheOpr.expire(key, TokenHandler.TOKEN_TIMEOUT);
         request.setIa(authToken.getIa());
     }
 
@@ -118,11 +118,11 @@ public class AuthTokenHandler {
             authTokenNew.setLastAccessTime(authToken.getAccessTime());
             authTokenNew.setExtend(authToken.getExtend());
 
-            cacheManager.del(getIaKey(appid, ia));
+            cacheOpr.del(getIaKey(appid, ia));
             String key = getIaKey(appid, iaNew);
             log.info("[IA]update token, new key={}, value={}, expire={}", key, authTokenNew, TokenHandler.TOKEN_TIMEOUT);
-            cacheManager.put(key, authTokenNew, TokenHandler.TOKEN_TIMEOUT);
-            cacheManager.expire(key, TokenHandler.TOKEN_TIMEOUT);
+            cacheOpr.put(key, authTokenNew, TokenHandler.TOKEN_TIMEOUT);
+            cacheOpr.expire(key, TokenHandler.TOKEN_TIMEOUT);
 
             return authTokenNew;
         } else {
@@ -130,8 +130,8 @@ public class AuthTokenHandler {
             authToken.setAccessTime(now);
             String key = getIaKey(authToken.getAppid(), ia);
             log.info("[IA]update token, old key={}, value={}, expire={}", key, authToken, TokenHandler.TOKEN_TIMEOUT);
-            cacheManager.put(key, authToken, TokenHandler.TOKEN_TIMEOUT);
-            cacheManager.expire(key, TokenHandler.TOKEN_TIMEOUT);
+            cacheOpr.put(key, authToken, TokenHandler.TOKEN_TIMEOUT);
+            cacheOpr.expire(key, TokenHandler.TOKEN_TIMEOUT);
             return authToken;
         }
     }
@@ -140,7 +140,7 @@ public class AuthTokenHandler {
         if (StringUtils.isBlank(ia))
             return null;
 
-        CacheResult<AuthToken> result = cacheManager.getObject(getIaKey(appid, ia));
+        CacheResult<AuthToken> result = cacheOpr.getObject(getIaKey(appid, ia));
         if (result.isSucc() && result.getModule() != null) {
             return result.getModule();
         }
@@ -153,6 +153,6 @@ public class AuthTokenHandler {
 
     /** 退出清楚 */
     public static void clearIa(String appid, String ia) {
-        cacheManager.del(getIaKey(appid, ia));
+        cacheOpr.del(getIaKey(appid, ia));
     }
 }

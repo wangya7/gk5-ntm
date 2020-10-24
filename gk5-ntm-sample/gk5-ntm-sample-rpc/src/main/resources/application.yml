@@ -29,7 +29,7 @@ datasource:
   - key: master
     host: 192.168.3.20
     port: 3306
-    db: ntmx2
+    db: ntmx
     username: dbmaster
     password: qwer1234!@#$
     minIdle: 10
@@ -38,7 +38,7 @@ datasource:
   - key: slave
     host: 192.168.3.20
     port: 3306
-    db: ntmx2
+    db: ntmx
     username: dbmaster
     password: qwer1234!@#$
     minIdle: 10

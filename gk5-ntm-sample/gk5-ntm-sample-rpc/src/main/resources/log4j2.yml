@@ -5,7 +5,7 @@ Configuration:
     - name: log.level.console
       value: trace
     - name: log.path
-      value: /Users/wangya/Downloads/logs
+      value: /webapps/logs
     - name: project.name
       value: ntm-sample-rpc
 

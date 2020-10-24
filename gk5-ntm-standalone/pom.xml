@@ -19,7 +19,8 @@
 
   <properties>
     <dubbo.version>2.7.3</dubbo.version>
-    <gk5.version>1.1.1-beta</gk5.version>
+    <gk5-boot.version>1.0.0-SNAPSHOT</gk5-boot.version>
+    <gk5.version>0.47.1-rc</gk5.version>
     <spring-web.version>5.1.8.RELEASE</spring-web.version>
     <jackson-annotations.version>2.10.0</jackson-annotations.version>
   </properties>
@@ -28,13 +29,13 @@
     <dependency>
       <groupId>wang.bannong</groupId>
       <artifactId>gk5-ntm-common</artifactId>
-      <version>1.0.8-beta</version>
+      <version>2.0.0-beta</version>
     </dependency>
 
     <dependency>
       <groupId>wang.bannong</groupId>
-      <artifactId>gk5-cache</artifactId>
-      <version>${gk5.version}</version>
+      <artifactId>gk5-boot-redis</artifactId>
+      <version>${gk5-boot.version}</version>
     </dependency>
     <dependency>
       <groupId>wang.bannong</groupId>
