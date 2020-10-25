@@ -70,6 +70,7 @@ public class BaseNtmCtrl {
             if (!result.isSuccess()) {
                 return result;
             }
+
         }
         final String beanName = apiInfo.getInnerInterface();
         BaseInnerService service = SpringBeanUtils.getBean(beanName, BaseInnerService.class);

@@ -25,10 +25,10 @@ public class AuthTokenHandler {
 
     private static CacheOpr cacheOpr = null;
 
-    private static void initCacheManager() {
+    static {
         if (null == cacheOpr) {
             // TODO 采用持久化的Redis缓存
-            cacheOpr = SpringBeanUtils.getBean("cacheManager", CacheOpr.class);
+            cacheOpr = SpringBeanUtils.getBean("cacheOpr", CacheOpr.class);
         }
     }
 
@@ -37,7 +37,6 @@ public class AuthTokenHandler {
         boolean isIa = ntmApi.getIsIa();
         NtmRequest request = innerRequest.getRequest();
         String ia = request.getIa();
-        initCacheManager();
         AuthToken authToken = getAuthToken(innerRequest.getRequest().getAppid(), ia);
         innerRequest.setAuthToken(authToken);
         if (isIa) {
@@ -64,7 +63,6 @@ public class AuthTokenHandler {
      * @param request 网关请求
      */
     public static void creteAuthToken(Subject subject, AuthToken.Role role, Map<String, String> extend, NtmRequest request) {
-        initCacheManager();
         String ia = TokenHandler.generateToken();
         String appid = request.getAppid();
         AuthToken authToken = new AuthToken();
@@ -100,7 +98,6 @@ public class AuthTokenHandler {
         if (authToken == null || StringUtils.isBlank(ia)) {
             return null;
         }
-        initCacheManager();
         Date now = new Date();
         if (TokenHandler.isNeedUpdateToken(authToken)) {
             AuthToken authTokenNew = new AuthToken();
@@ -135,7 +132,7 @@ public class AuthTokenHandler {
         }
     }
 
-    private static AuthToken getAuthToken(String appid, String ia) {
+    public static AuthToken getAuthToken(String appid, String ia) {
         if (StringUtils.isBlank(ia))
             return null;
 

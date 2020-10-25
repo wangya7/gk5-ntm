@@ -31,8 +31,15 @@ public enum ResultCode {
 
     api_param_missing(51, "参数【%s】缺失"),
     dto_param_missing(52, "Dto【%s】缺失成员变量【%s】"),
+    api_param_illegal(53, "参数【%s】非法"),
 
     app_version_too_low(71, "APP版本过低，请更新最新版本"),
+
+
+    api_service_notfound(123, "接口服务未找到"),
+    api_request_too_much(125, "请求太频繁了"),
+    no_auth_access(127, "无访问权限"),
+    user_need_login_token_invalid(129, "登录失效，请重新登录"),
 
     biz_exception(99, "%s"),
     ;

@@ -2,6 +2,7 @@ package wang.bannong.gk5.ntm.standalone.config;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -67,13 +68,16 @@ public class ApiYmlUtil {
                         String unique = arr1[0].trim();
                         info.setUnique(unique);
                         info.setName(unique);
-                        info.setVersion(Integer.valueOf(arr1[1].trim()));
+                        info.setVersion(converApiVersion(arr1[1].trim()));
                         info.setAppid("");
                         info.setInnerInterface(arr2[0].trim());
                         info.setIsIa(Integer.parseInt(arr2[1]) > 0);
                         info.setIsAsync(false);
 
-                        HttpMethod httpMethod = HttpMethod.map.get(arr2[2].trim().toUpperCase());
+                        HttpMethod httpMethod = HttpMethod.ofName(arr2[2].trim());
+                        if (httpMethod == null) {
+                            throw new RuntimeException(String.format(ERROR_MSG, apiKey));
+                        }
                         info.setMethod(httpMethod.getCode());
 
                         allApiInfo.put(apiKey, info);
@@ -97,6 +101,13 @@ public class ApiYmlUtil {
 
     public static boolean isContain(final String apiName, final int version) {
         return CollectionUtils.isNotEmpty(allApiInfoSet) && allApiInfoSet.contains(apiName + Constant.UNDERLINE + version);
+    }
+
+
+    public static int converApiVersion(String version) {
+        int pos = -1;
+        return (pos = version.indexOf(".")) < 0 ?
+                NumberUtils.toInt(version) : NumberUtils.toInt(version.substring(0, pos));
     }
 
 }

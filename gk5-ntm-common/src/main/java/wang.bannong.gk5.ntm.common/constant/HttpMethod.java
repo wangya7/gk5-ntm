@@ -33,4 +33,23 @@ public enum HttpMethod {
             map.put(item.name(), item);
         }
     }
+
+
+    public static HttpMethod of(byte code) {
+        for (HttpMethod item : EnumSet.allOf(HttpMethod.class)) {
+            if (item.getCode() == code) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public static HttpMethod ofName(String method) {
+        for (HttpMethod item : EnumSet.allOf(HttpMethod.class)) {
+            if (method.equalsIgnoreCase(item.name())) {
+                return item;
+            }
+        }
+        return null;
+    }
 }
