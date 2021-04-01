@@ -1,0 +1,61 @@
+Configuration:
+  status: warn
+  Properties:
+    Property:
+    - name: log.level.console
+      value: trace
+    - name: log.level.xjj
+      value: trace
+    - name: log.path
+      value: /Users/wangya/Downloads/logs
+    - name: project.name
+      value: ntm-sample-standalone
+
+  Appenders:
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      ThresholdFilter:
+        level: ${sys:log.level.console}
+        onMatch: ACCEPT
+        onMismatch: DENY
+      PatternLayout:
+        pattern: '%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n'
+
+    RollingFile:
+    - name: ROLLING_FILE
+      ignoreExceptions: false
+      fileName: ${sys:log.path}/${project.name}.log
+      filePattern: ${sys:log.path}/${date:yyyy-MM}/${project.name}-%d{yyyy-MM-dd}-%i.log.gz
+      PatternLayout:
+        pattern: '%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n'
+      Policies:
+        TimeBasedTriggeringPolicy:
+          interval: 1
+        SizeBasedTriggeringPolicy:
+          size: 64MB
+    - name: ROLLING_SQL_FILE
+      ignoreExceptions: false
+      fileName: ${sys:log.path}/${project.name}-sql.log
+      filePattern: ${sys:log.path}/${date:yyyy-MM}/${project.name}-%d{yyyy-MM-dd}-%i.log.sql.gz
+      PatternLayout:
+        pattern: '%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n'
+      Policies:
+        TimeBasedTriggeringPolicy:
+          interval: 1
+        SizeBasedTriggeringPolicy:
+          size: 64MB
+
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+      - ref: CONSOLE
+      - ref: ROLLING_FILE
+    Logger:
+    - name: com.insurance.dao
+      additivity: false
+      level: debug
+      AppenderRef:
+      - ref: ROLLING_SQL_FILE

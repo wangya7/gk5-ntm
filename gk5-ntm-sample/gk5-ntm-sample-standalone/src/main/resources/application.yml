@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ntm-sample-standalone
+  profiles:
+    include: api
+logging:
+  config: classpath:log4j2.yml
+
+
+datasource:
+  # 真实项目的mapper接口路径
+  mappersPath: wang.bannong.gk5.ntm.sample.standalone.dao.mapper
+  # 真实项目的mapper.xml路径，多个使用","分割
+  mapperLocations: classpath*:/mapper/*.xml
+  primary: master
+  dbs:
+  - key: master
+    host: 127.0.0.1
+    port: 3306
+    db: gk5
+    username: root
+    password: '@iam3307'
+    minIdle: 10
+    maxIdle: 10
+    connectionTimeout: 3000
+  - key: slave
+    host: 127.0.0.1
+    port: 3306
+    db: gk5
+    username: root
+    password: '@iam3307'
+    minIdle: 10
+    maxIdle: 10
+    connectionTimeout: 3000
+
+cache:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 50
+    poolMaxTotal: 500
+    poolMaxWaitMillis: -1
+    poolMaxIdle: 150
+    poolMinIdle: 100
+    poolTestOnBorrow: true
+

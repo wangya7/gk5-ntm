@@ -26,6 +26,11 @@
       <artifactId>gk5-ntm-standalone</artifactId>
       <version>${gk5-ntm-standalone.version}</version>
     </dependency>
+    <dependency>
+      <groupId>wang.bannong</groupId>
+      <artifactId>gk5-boot-starter-mybatis</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 </project>

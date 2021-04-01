@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+  <!-- 心跳 -->
+  <bean name="heartBeatJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject">
+      <bean class="com.insurance.biz.job.HeartBeatJob"/>
+    </property>
+    <property name="targetMethod" value="task"/>
+    <property name="concurrent" value="false"/>
+  </bean>
+  <bean id="heartBeatJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="heartBeatJob"/>
+    <property name="cronExpression" value="30 * * * * ?"/>
+  </bean>
+
+  <!-- 修改订单状态 -->
+  <bean name="modifyContractStatusJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject">
+      <bean class="com.insurance.biz.job.ModifyContractStatusJob"/>
+    </property>
+    <property name="targetMethod" value="task"/>
+    <property name="concurrent" value="false"/>
+  </bean>
+  <bean id="modifyContractStatusJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="modifyContractStatusJob"/>
+    <property name="cronExpression" value="0 5 0 * * ?"/>
+  </bean>
+
+  <!-- 统计报表 -->
+  <bean name="collectContractReportJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject">
+      <bean class="com.insurance.biz.job.CollectContractReportJob"/>
+    </property>
+    <property name="targetMethod" value="task"/>
+    <property name="concurrent" value="false"/>
+  </bean>
+  <bean id="collectContractReportJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="collectContractReportJob"/>
+    <property name="cronExpression" value="0 0 1 * * ?"/>
+  </bean>
+
+  <!-- 打包费用分析表 -->
+  <bean name="packageFeeAnalysisJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject">
+      <bean class="com.insurance.biz.job.PackageFeeAnalysisJob"/>
+    </property>
+    <property name="targetMethod" value="task"/>
+    <property name="concurrent" value="false"/>
+  </bean>
+  <bean id="packageFeeAnalysisJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="packageFeeAnalysisJob"/>
+    <property name="cronExpression" value="0 0 3 1 * ?"/>
+  </bean>
+
+  <!-- 配置调度工厂 -->
+  <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="triggers">
+      <list>
+        <ref bean="heartBeatJobTrigger"/>
+        <ref bean="modifyContractStatusJobTrigger"/>
+        <ref bean="collectContractReportJobTrigger"/>
+        <ref bean="packageFeeAnalysisJobTrigger"/>
+      </list>
+    </property>
+  </bean>
+</beans>

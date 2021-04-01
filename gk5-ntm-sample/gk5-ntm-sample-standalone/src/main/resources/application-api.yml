@@ -1,0 +1,17 @@
+ntm:
+  apiMap:
+    base:
+      # 用户查询
+      user.query_1: queryUserService,0,get
+
+    app:
+      # 2002 退出
+      gate.user.logout_1: logoutApiService,1,post
+
+    admin:
+      # 后台登录
+      chatgroup.add_1: addChatGroupService,0,post
+
+    3rd:
+      # 3rd
+      gate.test.demo_1: demo3rdApiService,0,get

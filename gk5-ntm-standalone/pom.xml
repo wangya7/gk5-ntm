@@ -34,8 +34,13 @@
 
     <dependency>
       <groupId>wang.bannong</groupId>
+      <artifactId>gk5-boot-starter-mybatis</artifactId>
+      <version>${gk5-boot.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>wang.bannong</groupId>
       <artifactId>gk5-boot-starter-redis</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${gk5-boot.version}</version>
     </dependency>
     <dependency>
       <groupId>wang.bannong</groupId>

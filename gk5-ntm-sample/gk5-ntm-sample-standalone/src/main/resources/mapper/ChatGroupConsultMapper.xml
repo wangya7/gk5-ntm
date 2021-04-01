@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.bannong.gk5.ntm.sample.standalone.dao.mapper.ChatGroupConsultMapper">
+  <resultMap id="BaseResultMap" type="wang.bannong.gk5.ntm.sample.standalone.common.domain.ChatGroupConsult">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="chat_group_id" jdbcType="BIGINT" property="chatGroupId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="id_del" jdbcType="TINYINT" property="idDel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, content, chat_group_id, status, id_del, create_time, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from chat_group_consult
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from chat_group_consult
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="wang.bannong.gk5.ntm.sample.standalone.common.domain.ChatGroupConsult">
+    insert into chat_group_consult (id, content, chat_group_id, 
+      status, id_del, create_time, 
+      modify_time)
+    values (#{id,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{chatGroupId,jdbcType=BIGINT}, 
+      #{status,jdbcType=TINYINT}, #{idDel,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="wang.bannong.gk5.ntm.sample.standalone.common.domain.ChatGroupConsult">
+    insert into chat_group_consult
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="chatGroupId != null">
+        chat_group_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="idDel != null">
+        id_del,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="chatGroupId != null">
+        #{chatGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="idDel != null">
+        #{idDel,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="wang.bannong.gk5.ntm.sample.standalone.common.domain.ChatGroupConsult">
+    update chat_group_consult
+    <set>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="chatGroupId != null">
+        chat_group_id = #{chatGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="idDel != null">
+        id_del = #{idDel,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="wang.bannong.gk5.ntm.sample.standalone.common.domain.ChatGroupConsult">
+    update chat_group_consult
+    set content = #{content,jdbcType=VARCHAR},
+      chat_group_id = #{chatGroupId,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      id_del = #{idDel,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
