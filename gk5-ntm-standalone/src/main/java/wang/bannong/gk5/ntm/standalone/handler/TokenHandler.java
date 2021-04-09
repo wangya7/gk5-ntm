@@ -9,12 +9,13 @@ import wang.bannong.gk5.ntm.common.model.AuthToken;
 public class TokenHandler {
 
     /** APP 一周 */
-    public final static int UPDATE_HOUR_SECONDS = 345600; // 四天
-    public final static int EXPIRE_HOUR_SECONDS = 604800; // 一周
+    public final static int UPDATE_HOUR_SECONDS = 18 * 24 * 3600; // 18天
+    public final static int EXPIRE_HOUR_SECONDS = 22 * 24 * 3600; // 22天
 
     /** ia:appid:token */
     public final static String CACHE_TOKEN   = "ia:%s:%s";
-    public final static long   TOKEN_TIMEOUT = 604800;
+    /** 秒 */
+    public final static long TOKEN_TIMEOUT = 25 * 24 * 3600;
 
     /** ADMIN 15分钟 */
     public final static int UPDATE_HOUR_SECONDS_ADMIN = 1000;
