@@ -1,5 +1,6 @@
 package wang.bannong.gk5.ntm.sample.standalone;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -32,11 +33,14 @@ public class StudentTest {
 
     @Test
     public void queryMultiSumResult() {
-        Map<String, Long> map = masterStudentMapper.selectMultiSumResult();
+        Map<String, Object> map = masterStudentMapper.selectMultiSumResult();
         // 对于 Map<String, Object> 采用下面两种方式获取值，方案一可行
         // 方案一 Long ageSum = Long.valueOf(String.valueOf(map.get("ageSum")));
         // 方案二 Long typeSum = (Long) map.get("typeSum");
-        log.info("map={}, ageSum={}, typeSum={}", map, map.get("ageSum"), map.get("typeSum"));
+        BigDecimal ageSum = (BigDecimal) map.get("ageSum");
+        BigDecimal typeSum = (BigDecimal) map.get("typeSum");
+        Long total = (Long) map.get("total");
+        log.info("map={}, ageSum={}, typeSum={}, total={}", map, ageSum, typeSum, total);
     }
 
     @Test

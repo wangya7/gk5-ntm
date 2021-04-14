@@ -18,7 +18,11 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectMultiSumResult" resultType="java.util.Map">
-    select sum(age) as ageSum, sum(type) as typeSum
+    select
+    sum(age) as ageSum,
+    sum(type) as typeSum,
+    count(id) as total
+    <!-- sql 可以直接查询，但是代码不可以  除非使用 <String,Object> 承载结果  sum变成的是BigDecimal类型 count变成的是Long类型 -->
     from student
   </select>
 
