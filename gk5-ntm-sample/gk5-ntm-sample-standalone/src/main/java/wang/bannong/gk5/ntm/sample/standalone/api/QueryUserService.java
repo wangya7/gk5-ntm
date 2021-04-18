@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2021 Choice, Inc.
- * All Rights Reserved.
- * Choice Proprietary and Confidential.
- */
-
 package wang.bannong.gk5.ntm.sample.standalone.api;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +11,6 @@ import wang.bannong.gk5.ntm.sample.standalone.common.domain.ChatGroupConsult;
 import wang.bannong.gk5.ntm.sample.standalone.mgr.ChatGroupConsultMgr;
 import wang.bannong.gk5.ntm.standalone.BaseInnerService;
 
-/**
- *
- * @author <a href="mailto:danliang@myweimai.com">丹良</a>
- * @date 2021/4/1
- */
 @Slf4j
 @Service
 public class QueryUserService implements BaseInnerService {

@@ -41,9 +41,9 @@ public class BaseNtmCtrl {
 
     public NtmResponse api(NtmRequest request) {
         NtmApi api = ApiYmlUtil.getApiInfo(request.getApi(), request.getV());
+        log.info(NtmConstant.LOG_IN + "api={}", api);
         if (api == null)
             return log(NtmResponse.builder(NtmResult.of(ResultCode.api_not_exist)).builder());
-
         NtmInnerRequest innerRequest = NtmInnerRequest.of(request);
         innerRequest.setNtmApi(api);
 

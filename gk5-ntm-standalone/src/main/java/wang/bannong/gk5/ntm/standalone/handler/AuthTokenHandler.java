@@ -10,6 +10,7 @@ import java.util.Map;
 
 import wang.bannong.gk5.boot.starter.redis.CacheOpr;
 import wang.bannong.gk5.boot.starter.redis.CacheResult;
+import wang.bannong.gk5.ntm.common.constant.NtmConstant;
 import wang.bannong.gk5.ntm.common.domain.NtmApi;
 import wang.bannong.gk5.ntm.common.model.AuthToken;
 import wang.bannong.gk5.ntm.common.model.NtmInnerRequest;
@@ -37,6 +38,7 @@ public class AuthTokenHandler {
         boolean isIa = ntmApi.getIsIa();
         NtmRequest request = innerRequest.getRequest();
         String ia = request.getIa();
+        LOGGER.info(NtmConstant.LOG_IN + "check AuthToke, ia={}", ia);
         AuthToken authToken = getAuthToken(innerRequest.getRequest().getAppid(), ia);
         innerRequest.setAuthToken(authToken);
         if (isIa) {
@@ -95,6 +97,7 @@ public class AuthTokenHandler {
      * @param ia        ia
      */
     public static AuthToken updateAuthToken(AuthToken authToken, String ia) {
+        LOGGER.info("[IA] AuthToken, ia={}, authToken={}", ia, authToken);
         if (authToken == null || StringUtils.isBlank(ia)) {
             return null;
         }
@@ -107,8 +110,6 @@ public class AuthTokenHandler {
             authTokenNew.setRole(authToken.getRole());
             String appid = authToken.getAppid();
             authTokenNew.setAppid(appid);
-
-
             authTokenNew.setAccessTime(now);
             authTokenNew.setCreateTime(now);
             authTokenNew.setLastAccessTime(authToken.getAccessTime());
