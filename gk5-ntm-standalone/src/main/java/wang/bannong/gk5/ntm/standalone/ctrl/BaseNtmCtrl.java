@@ -1,5 +1,6 @@
 package wang.bannong.gk5.ntm.standalone.ctrl;
 
+import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import wang.bannong.gk5.ntm.standalone.config.ApiYmlUtil;
 import wang.bannong.gk5.ntm.standalone.config.NtmApiChannel;
 import wang.bannong.gk5.ntm.standalone.handler.AuthTokenHandler;
 import wang.bannong.gk5.ntm.standalone.handler.RequestHandler;
+import wang.bannong.gk5.ntm.standalone.handler.TokenHandler;
 import wang.bannong.gk5.util.SpringBeanUtils;
 
 @Slf4j
@@ -32,6 +34,7 @@ public class BaseNtmCtrl {
     @RequestMapping(value = "/ntm", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public NtmResponse api(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         // 1. 获取request对象
+        MDC.put("tid", TokenHandler.generateToken());
         NtmResult domain = RequestHandler.checkAndConvert2NtmRequest(servletRequest);
         if (!domain.isSuccess())
             return log(NtmResponse.builder(domain).builder());
