@@ -59,7 +59,7 @@
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-collections.version>4.4</commons-collections.version>
     <guava.version>30.0-jre</guava.version>
-    <fastjson.version>1.2.73</fastjson.version>
+    <fastjson.version>1.2.83</fastjson.version>
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
   </properties>
 
